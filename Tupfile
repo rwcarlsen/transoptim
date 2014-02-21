@@ -14,9 +14,10 @@ cxx_flags = @(CXXFLAGS) -fpic -I@(CYCLUS_INSTALL)/include -I. $(includes)
 ld_flags = @(LDFLAGS) -fpic -L@(CYCLUS_INSTALL)/lib -L. -rdynamic -Wl,-rpath=@(PROJECT_DIR)/build,-rpath=@(CYCLUS_INSTALL)/lib -lcycluscore
 
 # build module libraries
-: foreach source.cc sink.cc |> @(CXX) $(cxx_flags) -c %f -o %o |> %B.o {objs}
+: foreach source.cc sink.cc builder.cc |> @(CXX) $(cxx_flags) -c %f -o %o |> %B.o {objs}
 
 !cxxlink = |> @(CXX) $(ld_flags) -shared %f -o %o |> 
 : source.o |> !cxxlink |> libSource.so
 : sink.o |> !cxxlink |> libSink.so
+: builder.o |> !cxxlink |> libBuilder.so
 
