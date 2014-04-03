@@ -1,0 +1,36 @@
+
+strategy
+    graphics
+    tabular_graphics_data
+        tabular_graphics_file = 'cycopt.dat'
+    single_method
+
+method
+    max_iterations = 100
+    convergence_tolerance = 1e-4
+
+    mesh_adaptive_search
+
+model
+    single
+
+{{$dot := .}}
+variables
+    discrete_design_range = {{len .InitialSinks}}
+        initial_point     {{range .InitialSinks}}{{.}} {{end}}
+        lower_bounds      {{range .InitialSinks}}1 {{end}}
+        upper_bounds      {{range .InitialSinks}}{{$dot.SimDur}} {{end}}
+        descriptors       {{range $i, $val := .InitialSinks}}'x{{$i}}' {{end}}
+
+interface
+    fork
+        analysis_driver = 'cycdriver'
+    asynchronous
+
+responses
+    objective_functions = 1
+    numerical_gradients
+        method_source dakota
+        interval_type forward
+        fd_gradient_step_size = 1.e-5
+    no_hessians

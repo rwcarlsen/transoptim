@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+
+<simulation>
+  <control>
+      <duration>{{.SimDur}}</duration>
+    <startmonth>1</startmonth>
+    <startyear>2000</startyear>
+    <decay>0</decay>
+    <simhandle>{{.Handle}}</simhandle>
+  </control>
+
+  <commodity>
+    <name>cheese</name>
+  </commodity>
+
+  <prototype>
+    <name>CheeseFarm</name>
+    <agent>
+      <Source>
+        <commod_>cheese</commod_>
+        <recipe_name_>swiss</recipe_name_>
+        <capacity_>3</capacity_>
+      </Source>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Copps</name>
+    <agent>
+      <Sink>
+        <capacity_>3</capacity_>
+        <in_commods_>
+          <val>cheese</val>
+        </in_commods_>
+      </Sink>
+    </agent>
+    <incommodity>waste</incommodity>
+  </prototype>
+
+  <prototype>
+    <name>ElonMusk</name>
+    <agent>
+      <DeployInst>
+
+        {{range .SourceFacs}}
+        <buildorder>
+          <prototype>CheeseFarm</prototype>
+          <number>1</number>
+          <date>{{.}}</date>
+        </buildorder>
+        {{end}}
+        {{range .Params}}
+        <buildorder>
+          <prototype>Copps</prototype>
+          <number>1</number>
+          <date>{{.}}</date>
+        </buildorder>
+        {{end}}
+
+      </DeployInst>
+    </agent>
+  </prototype>
+
+
+  <agent>
+    <name>musk1</name>
+    <prototype>ElonMusk</prototype>
+  </agent>
+
+  <recipe>
+    <name>swiss</name>
+    <basis>mass</basis>
+    <nuclide>
+      <id>922350000</id>
+      <comp>0.711</comp>
+    </nuclide>
+    <nuclide>
+      <id>922380000</id>
+      <comp>99.289</comp>
+    </nuclide>
+  </recipe>
+
+</simulation>

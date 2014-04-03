@@ -1,0 +1,19 @@
+{
+    "CyclusTmpl": "musky_cheese.xml",
+    "CyclusInfile": "musky_cheese.gen.xml",
+    "DakotaTmpl": "dakota.in",
+    "DakotaInfile": "dakota.gen.in",
+    "CyclusBin": "/home/r/cyc/bin/cyclus",
+    "SimDur": 10,
+    "InitialSinks": [
+            1,
+            1,
+            1
+        ],
+    "SourceFacs": [
+            1,
+            7,
+            9
+        ]
+}
+        
