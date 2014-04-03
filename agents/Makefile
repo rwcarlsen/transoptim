@@ -28,7 +28,7 @@ $(fname).o : $(fname).gen.cpp $(fname).gen.hpp
 $(fname).gen.cpp: $(fname).cc
 	$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 	sed -i 's/$(fname).h/$(fname).gen.hpp/' $@
-	$(CXX) -MM $(CXXFLAGS) $(includes) $< > $*.d
+	$(CXX) -MM $(CXXFLAGS) $(includes) $< > $(fname).d
 
 $(fname).gen.hpp: $(fname).h
 	$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
@@ -40,6 +40,7 @@ clean:
 	rm -f $(fname).gen.cpp
 
 ##### pattern rules to build all object files from source #####
+
 # pull in dependency info for *existing* .o files
 -include $(objs:%.o=%.d)
 
