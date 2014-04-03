@@ -3,12 +3,14 @@
 
 #include <string>
 #include "cyclus.h"
+#include "sell_policy.h"
+#include "buy_policy.h"
 
 class RecipeExtractor : public cyclus::Facility {
  public:
   RecipeExtractor(cyclus::Context* ctx);
   virtual ~RecipeExtractor() {};
-  virtual std::string str() {};
+  virtual std::string str() {return "";};
 
   virtual void DoRegistration();
 
@@ -20,6 +22,8 @@ class RecipeExtractor : public cyclus::Facility {
  private:
   #pragma cyclus var {}
   std::string incommod_;
+  #pragma cyclus var {}
+  std::string inrecipe_;
   #pragma cyclus var {}
   std::string wastecommod_;
   #pragma cyclus var {}

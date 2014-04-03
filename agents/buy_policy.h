@@ -14,14 +14,13 @@ using cyc::Trade;
 
 class BuyPolicy : public cyc::Trader {
  public:
-  BuyPolicy(cyc::Model* manager) : cyc::Trader(manager) {};
+  BuyPolicy(cyc::Agent* manager) : cyc::Trader(manager) {};
 
   virtual ~BuyPolicy() {};
 
-  void Init(cyc::ResourceBuff* buf, std::string commod, double cap,
+  void Init(cyc::ResourceBuff* buf, std::string commod,
             cyc::Composition::Ptr c) {
     buf_ = buf;
-    cap_ = cap;
     comp_ = c;
     commod_ = commod;
   }
@@ -34,7 +33,7 @@ class BuyPolicy : public cyc::Trader {
     }
 
     RequestPortfolio<Material>::Ptr port(new RequestPortfolio<Material>());
-    double amt = std::min(cap_, buf_->space());
+    double amt = buf_->space();
     Material::Ptr m = Material::CreateUntracked(amt, comp_);
     port->AddRequest(m, this, commod_);
 
@@ -55,7 +54,6 @@ class BuyPolicy : public cyc::Trader {
   }
 
  private:
-  double cap_;
   cyc::ResourceBuff* buf_;
   cyc::Composition::Ptr comp_;
   std::string commod_;

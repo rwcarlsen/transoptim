@@ -15,7 +15,7 @@ using cyc::Trade;
 
 class SrcPolicy : public cyc::Trader {
  public:
-  SrcPolicy(cyc::Model* manager) : cyc::Trader(manager) {};
+  SrcPolicy(cyc::Agent* manager) : cyc::Trader(manager) {};
 
   virtual ~SrcPolicy() {};
 

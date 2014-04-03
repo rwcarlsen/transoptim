@@ -8,9 +8,9 @@ namespace cyc = cyclus;
 
 class SellPolicy : public cyc::Trader {
  public:
-  SellPolicy(cyc::Model* manager);
+  SellPolicy(cyc::Agent* manager);
 
-  void Init(cyc::ResourceBuff* buf, std::string commod, double cap);
+  void Init(cyc::ResourceBuff* buf, std::string commod);
 
   virtual ~SellPolicy() {};
 
@@ -26,7 +26,6 @@ class SellPolicy : public cyc::Trader {
  private:
   cyc::ResourceBuff* buf_;
   std::string commod_;
-  double cap_
 };
 
 #endif
