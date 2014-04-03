@@ -1,16 +1,18 @@
-#ifndef FULL_SELL_POLICY_H_
-#define FULL_SELL_POLICY_H_
+#ifndef SELL_POLICY_H_
+#define SELL_POLICY_H_
 
 #include <string>
-#include "cyclus/cyclus.h"
+#include "cyclus.h"
 
 namespace cyc = cyclus;
 
-class FullSellPolicy : public cyc::Trader {
+class SellPolicy : public cyc::Trader {
  public:
-  FullSellPolicy(cyc::Model* manager, cyc::ResourceBuff* buf, std::string commod);
+  SellPolicy(cyc::Model* manager);
 
-  virtual ~FullSellPolicy() {};
+  void Init(cyc::ResourceBuff* buf, std::string commod, double cap);
+
+  virtual ~SellPolicy() {};
 
   virtual std::set<cyc::BidPortfolio<cyc::Material>::Ptr>
   GetMatlBids(const cyc::CommodMap<cyc::Material>::type&
@@ -24,8 +26,7 @@ class FullSellPolicy : public cyc::Trader {
  private:
   cyc::ResourceBuff* buf_;
   std::string commod_;
+  double cap_
 };
 
 #endif
-
-

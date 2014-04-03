@@ -2,7 +2,7 @@
 #define SRC_POLICY_H_
 
 #include <string>
-#include "cyclus/cyclus.h"
+#include "cyclus.h"
 
 namespace cyc = cyclus;
 
@@ -24,12 +24,6 @@ class SrcPolicy : public cyc::Trader {
     cap_ = cap;
     comp_ = c;
     commod_ = commod;
-  }
-
-  void InitFrom(const SrcPolicy& other) {
-    cap_ = other.cap_;
-    commod_ = other.commod_;
-    comp_ = other.comp_;
   }
 
   virtual std::set<cyc::BidPortfolio<cyc::Material>::Ptr>

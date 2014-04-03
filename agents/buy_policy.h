@@ -1,8 +1,8 @@
-#ifndef SINK_POLICY_H_
-#define SINK_POLICY_H_
+#ifndef BUY_POLICY_H_
+#define BUY_POLICY_H_
 
 #include <string>
-#include "cyclus/cyclus.h"
+#include "cyclus.h"
 
 namespace cyc = cyclus;
 
@@ -12,34 +12,18 @@ using cyc::Request;
 using cyclus::RequestPortfolio;
 using cyc::Trade;
 
-class SinkPolicy : public cyc::Trader {
+class BuyPolicy : public cyc::Trader {
  public:
-  SinkPolicy(cyc::Model* manager, cyc::ResourceBuff* buf) : cyc::Trader(manager),
-    buf_(buf) {}
+  BuyPolicy(cyc::Model* manager) : cyc::Trader(manager) {};
 
-  virtual ~SinkPolicy() {};
+  virtual ~BuyPolicy() {};
 
-  void Init(double cap, cyc::Composition::Ptr c,
-            std::string commod) {
+  void Init(cyc::ResourceBuff* buf, std::string commod, double cap,
+            cyc::Composition::Ptr c) {
+    buf_ = buf;
     cap_ = cap;
     comp_ = c;
     commod_ = commod;
-  }
-
-  void InitFrom(const SinkPolicy& other) {
-    cap_ = other.cap_;
-    commod_ = other.commod_;
-    comp_ = other.comp_;
-  }
-
-  double capacity() {
-    return cap_;
-  }
-  std::string commod() {
-    return commod_;
-  }
-  cyc::Composition::Ptr comp() {
-    return comp_;
   }
 
   std::set<cyclus::RequestPortfolio<cyclus::Material>::Ptr>
@@ -78,6 +62,4 @@ class SinkPolicy : public cyc::Trader {
 };
 
 #endif
-
-
 

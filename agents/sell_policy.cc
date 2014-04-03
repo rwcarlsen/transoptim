@@ -1,4 +1,4 @@
-#include "full_sell_policy.h"
+#include "sell_policy.h"
 
 using cyc::Bid;
 using cyc::BidPortfolio;
@@ -8,12 +8,17 @@ using cyc::Request;
 using cyc::Trade;
 using cyc::ResourceBuff;
 
-FullSellPolicy::FullSellPolicy(cyc::Model* manager, cyc::ResourceBuff* buf,
-                               std::string commod)
-  : cyc::Trader(manager), buf_(buf), commod_(commod) {}
+SellPolicy::SellPolicy(cyc::Model* manager)
+  : cyc::Trader(manager), cap_(0) {}
+
+void SellPolicy::Init(cyc::ResourceBuff* buf, std::string commod, double cap) {
+  buf_ = buf;
+  commod_ = commod;
+  cap_ = cap;
+}
 
 std::set<cyclus::BidPortfolio<cyclus::Material>::Ptr>
-FullSellPolicy::GetMatlBids(
+SellPolicy::GetMatlBids(
   const cyclus::CommodMap<cyclus::Material>::type& commod_requests) {
   std::set<BidPortfolio<Material>::Ptr> ports;
   if (buf_->empty()) {
@@ -37,13 +42,14 @@ FullSellPolicy::GetMatlBids(
     port->AddBid(req, offer, this);
   }
 
-  CapacityConstraint<Material> cc(buf_->capacity());
+  double qty = std::min(buf_->quantity(), cap_);
+  CapacityConstraint<Material> cc(qty);
   port->AddConstraint(cc);
   ports.insert(port);
   return ports;
 }
 
-void FullSellPolicy::GetMatlTrades(
+void SellPolicy::GetMatlTrades(
   const std::vector< cyclus::Trade<cyclus::Material> >& trades,
   std::vector<std::pair<cyclus::Trade<cyclus::Material>,
   cyclus::Material::Ptr> >& responses) {
@@ -54,7 +60,7 @@ void FullSellPolicy::GetMatlTrades(
     double qty = it->amt;
     provided += qty;
     cyc::Manifest man = buf_->PopQty(qty)
-    std::vector<Material::Ptr> man = cyc::ResCast<Material>(buf_->PopQty(qty));
+                        std::vector<Material::Ptr> man = cyc::ResCast<Material>(buf_->PopQty(qty));
     Material::Ptr m = man.back();
     man.pop_back();
     for (int i = 0; i < man.size(); ++i) {
@@ -63,13 +69,7 @@ void FullSellPolicy::GetMatlTrades(
     responses.push_back(std::make_pair(*it, m));
   }
   if (provided > capacity_) {
-    std::stringstream ss;
-    ss << "source facility is being asked to provide " << provided
-       << " but its capacity is " << capacity_ << ".";
-    throw cyclus::ValueError(ss.str());
+    throw cyclus::ValueError("SellPolicy asked to pop over capacity");
   }
 }
-
-
-
 
