@@ -11,7 +11,7 @@ class BuyPolicy : public cyclus::Trader {
   virtual ~BuyPolicy() {};
 
   void Init(cyclus::ResourceBuff* buf, std::string commod,
-            cyclus::Composition::Ptr c);
+            cyclus::Composition::Ptr c, double pref = 1.0);
 
   std::set<cyclus::RequestPortfolio<cyclus::Material>::Ptr>
   GetMatlRequests();
@@ -24,6 +24,7 @@ class BuyPolicy : public cyclus::Trader {
   cyclus::ResourceBuff* buf_;
   cyclus::Composition::Ptr comp_;
   std::string commod_;
+  double pref_;
 };
 
 #endif

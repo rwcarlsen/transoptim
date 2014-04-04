@@ -6,10 +6,11 @@ using cyclus::RequestPortfolio;
 using cyclus::Trade;
 
 void BuyPolicy::Init(cyclus::ResourceBuff* buf, std::string commod,
-                     cyclus::Composition::Ptr c) {
+                     cyclus::Composition::Ptr c, double pref) {
   buf_ = buf;
   comp_ = c;
   commod_ = commod;
+  pref_ = pref;
 }
 
 std::set<RequestPortfolio<Material>::Ptr>
@@ -22,7 +23,7 @@ BuyPolicy::GetMatlRequests() {
   RequestPortfolio<Material>::Ptr port(new RequestPortfolio<Material>());
   double amt = buf_->space();
   Material::Ptr m = Material::CreateUntracked(amt, comp_);
-  port->AddRequest(m, this, commod_);
+  port->AddRequest(m, this, commod_, pref_);
 
   ports.insert(port);
   CapacityConstraint<Material> cc(amt);

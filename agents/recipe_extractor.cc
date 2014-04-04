@@ -18,7 +18,7 @@ RecipeExtractor::RecipeExtractor(cyclus::Context* ctx)
 void RecipeExtractor::DoRegistration() {
   outpolicy_.Init(&outbuf_, outcommod_);
   wastepolicy_.Init(&wastebuf_, wastecommod_);
-  inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_));
+  inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_), wastepref_);
 
   context()->RegisterTrader(&outpolicy_);
   context()->RegisterTrader(&wastepolicy_);

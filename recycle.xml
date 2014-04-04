@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<simulation>
+  <control>
+    <duration>100</duration>
+    <startmonth>1</startmonth>
+    <startyear>2000</startyear>
+    <decay>0</decay>
+  </control>
+
+  <commodity><name>lwr_fresh</name></commodity>
+  <commodity><name>waste</name></commodity>
+
+  <prototype>
+    <name>LWRFuelFab</name>
+    <agent>
+      <Source>
+        <commod_>lwr_fresh</commod_>
+        <recipe_name_>lwr_fresh_fuel</recipe_name_>
+        <capacity_>10</capacity_>
+      </Source>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Repository</name>
+    <agent>
+      <Sink>
+        <capacity_>10</capacity_>
+        <in_commods_>
+          <val>waste</val>
+        </in_commods_>
+      </Sink>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Reprocessor</name>
+    <agent>
+      <RecipeExtractor>
+        <incommod_>waste</incommod_>
+        <outcommod_>lwr_fresh</outcommod_>
+        <wastecommod_>waste</wastecommod_>
+        <inrecipe_>lwr_spent_fuel</inrecipe_>
+        <outrecipe_>lwr_fresh_fuel</outrecipe_>
+        <inbuf_size_>2</inbuf_size_>
+        <outbuf_size_>1</outbuf_size_>
+        <wastebuf_size_>1000</wastebuf_size_>
+        <throughput_>1</throughput_>
+        <wastepref_>2.0</wastepref_>
+      </RecipeExtractor>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>LWRReactor</name>
+    <agent>
+      <BatchReactor>
+        <fuel>         
+          <incommodity>lwr_fresh</incommodity>
+          <inrecipe>lwr_fresh_fuel</inrecipe>
+          <outcommodity>waste</outcommodity>
+          <outrecipe>lwr_spent_fuel</outrecipe>
+        </fuel>
+        <processtime>1</processtime>
+        <nbatches>1</nbatches>
+        <batchsize>1</batchsize>
+        <refueltime>0</refueltime>
+        <commodity_production>
+          <commodity>lwr_power</commodity>
+          <capacity>.928</capacity>        <!--GWe-y-->
+          <cost>64</cost>        <!--$/kWe-y-->
+        </commodity_production>
+      </BatchReactor>
+    </agent>
+  </prototype>
+
+  <agent>
+    <name>repo1</name>
+    <prototype>Repository</prototype>
+  </agent>
+
+  <agent>
+    <name>fuelfab1</name>
+    <prototype>LWRFuelFab</prototype>
+  </agent>
+
+  <agent>
+    <name>reprocessor1</name>
+    <prototype>Reprocessor</prototype>
+  </agent>
+
+  <agent>
+    <name>reactor1</name>
+    <prototype>LWRReactor</prototype>
+  </agent>
+
+  <recipe>
+    <name>lwr_fresh_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>0.711</comp></nuclide>
+    <nuclide><id>922380000</id><comp>99.289</comp></nuclide>
+  </recipe>
+
+  <recipe>
+    <name>lwr_spent_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id> <comp>156.729</comp> </nuclide>
+    <nuclide> <id>922360000</id> <comp>102.103</comp> </nuclide>
+    <nuclide> <id>922380000</id> <comp>18280.324</comp> </nuclide>
+    <nuclide> <id>932370000</id> <comp>13.656</comp> </nuclide>
+    <nuclide> <id>942380000</id> <comp>5.043</comp> </nuclide>
+    <nuclide> <id>942390000</id> <comp>106.343</comp> </nuclide>
+    <nuclide> <id>942400000</id> <comp>41.357</comp> </nuclide>
+    <nuclide> <id>942410000</id> <comp>36.477</comp> </nuclide>
+    <nuclide> <id>942420000</id> <comp>15.387</comp> </nuclide>
+    <nuclide> <id>952410000</id> <comp>1.234</comp> </nuclide>
+    <nuclide> <id>952430000</id> <comp>3.607</comp> </nuclide>
+    <nuclide> <id>962440000</id> <comp>0.431</comp> </nuclide>
+    <nuclide> <id>962450000</id> <comp>1.263</comp> </nuclide>
+  </recipe> 
+</simulation>

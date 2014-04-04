@@ -25,17 +25,19 @@ class RecipeExtractor : public cyclus::Facility {
   #pragma cyclus var {}
   std::string inrecipe_;
   #pragma cyclus var {}
-  std::string wastecommod_;
+  double inbuf_size_;
   #pragma cyclus var {}
   std::string outcommod_;
   #pragma cyclus var {}
   std::string outrecipe_;
   #pragma cyclus var {}
-  double inbuf_size_;
-  #pragma cyclus var {}
   double outbuf_size_;
   #pragma cyclus var {}
+  std::string wastecommod_;
+  #pragma cyclus var {}
   double wastebuf_size_;
+  #pragma cyclus var {}
+  double wastepref_;
   #pragma cyclus var {}
   double throughput_;
   #pragma cyclus var {'capacity': 'inbuf_size_'}
