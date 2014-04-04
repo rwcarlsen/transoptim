@@ -4,27 +4,25 @@
 #include <string>
 #include "cyclus.h"
 
-namespace cyc = cyclus;
-
-class SellPolicy : public cyc::Trader {
+class SellPolicy : public cyclus::Trader {
  public:
-  SellPolicy(cyc::Agent* manager);
+  SellPolicy(cyclus::Agent* manager) : Trader(manager) {};
 
-  void Init(cyc::ResourceBuff* buf, std::string commod);
+  void Init(cyclus::ResourceBuff* buf, std::string commod);
 
   virtual ~SellPolicy() {};
 
-  virtual std::set<cyc::BidPortfolio<cyc::Material>::Ptr>
-  GetMatlBids(const cyc::CommodMap<cyc::Material>::type&
+  virtual std::set<cyclus::BidPortfolio<cyclus::Material>::Ptr>
+  GetMatlBids(const cyclus::CommodMap<cyclus::Material>::type&
               commod_requests);
 
   virtual void GetMatlTrades(
-    const std::vector< cyc::Trade<cyc::Material> >& trades,
-    std::vector<std::pair<cyc::Trade<cyc::Material>,
-    cyc::Material::Ptr> >& responses);
+    const std::vector< cyclus::Trade<cyclus::Material> >& trades,
+    std::vector<std::pair<cyclus::Trade<cyclus::Material>,
+    cyclus::Material::Ptr> >& responses);
 
  private:
-  cyc::ResourceBuff* buf_;
+  cyclus::ResourceBuff* buf_;
   std::string commod_;
 };
 

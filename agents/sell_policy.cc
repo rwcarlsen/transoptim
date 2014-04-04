@@ -1,23 +1,20 @@
 #include "sell_policy.h"
 
-using cyc::BidPortfolio;
-using cyc::CapacityConstraint;
-using cyc::Material;
-using cyc::Request;
-using cyc::Trade;
-using cyc::Manifest;
+using cyclus::BidPortfolio;
+using cyclus::CapacityConstraint;
+using cyclus::Material;
+using cyclus::Request;
+using cyclus::Trade;
+using cyclus::Manifest;
 
-SellPolicy::SellPolicy(cyc::Agent* manager)
-  : Trader(manager) {}
-
-void SellPolicy::Init(cyc::ResourceBuff* buf, std::string commod) {
+void SellPolicy::Init(cyclus::ResourceBuff* buf, std::string commod) {
   buf_ = buf;
   commod_ = commod;
 }
 
 std::set<BidPortfolio<Material>::Ptr>
 SellPolicy::GetMatlBids(
-    const cyc::CommodMap<Material>::type& commod_requests) {
+    const cyclus::CommodMap<Material>::type& commod_requests) {
 
   std::set<BidPortfolio<Material>::Ptr> ports;
   if (buf_->empty()) {
@@ -62,5 +59,4 @@ void SellPolicy::GetMatlTrades(
     responses.push_back(std::make_pair(*it, man[0]));
   }
 }
-
 

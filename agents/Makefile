@@ -1,6 +1,5 @@
 
-cyclus_root = /home/r/cyc/install
-cycpp = /home/r/cyc/cyclus/cli/cycpp.py
+cyclus_root = /home/robert/cyc/install
 libname = libRecipeExtractor.so
 fname = recipe_extractor
 
@@ -14,6 +13,7 @@ includes += $(shell pkg-config --cflags libxml++-2.6)
 libs += -L$(cyclus_root)/lib -lcycluscore
 
 ##### variable setup #####
+cycpp = $(cyclus_root)/bin/cycpp.py
 source += $(wildcard *.cc)
 source_unique = $(sort $(source))
 objs = $(source_unique:%.cc=%.o)

@@ -5,8 +5,8 @@ using cyclus::Material;
 using cyclus::Composition;
 using cyclus::ResCast;
 
-RecipeExtractor::RecipeExtractor(cyc::Context* ctx)
-    : cyc::Facility(ctx),
+RecipeExtractor::RecipeExtractor(cyclus::Context* ctx)
+    : cyclus::Facility(ctx),
       inbuf_size_(0),
       outbuf_size_(0),
       wastebuf_size_(0),
@@ -59,6 +59,6 @@ void RecipeExtractor::Tick(int time) {
   }
 }
 
-extern "C" cyc::Agent* ConstructRecipeExtractor(cyc::Context* ctx) {
+extern "C" cyclus::Agent* ConstructRecipeExtractor(cyclus::Context* ctx) {
   return new RecipeExtractor(ctx);
 }
