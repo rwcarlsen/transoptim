@@ -9,6 +9,7 @@
   </control>
 
   <commodity><name>lwr_fresh</name></commodity>
+  <commodity><name>lwr_spent</name></commodity>
   <commodity><name>waste</name></commodity>
 
   <prototype>
@@ -29,6 +30,7 @@
         <capacity_>10</capacity_>
         <in_commods_>
           <val>waste</val>
+          <val>lwr_spent</val>
         </in_commods_>
       </Sink>
     </agent>
@@ -38,14 +40,14 @@
     <name>Reprocessor</name>
     <agent>
       <RecipeExtractor>
-        <incommod_>waste</incommod_>
+        <incommod_>lwr_spent</incommod_>
         <outcommod_>lwr_fresh</outcommod_>
         <wastecommod_>waste</wastecommod_>
         <inrecipe_>lwr_spent_fuel</inrecipe_>
         <outrecipe_>lwr_fresh_fuel</outrecipe_>
-        <inbuf_size_>2</inbuf_size_>
+        <inbuf_size_>1</inbuf_size_>
         <outbuf_size_>1</outbuf_size_>
-        <wastebuf_size_>1000</wastebuf_size_>
+        <wastebuf_size_>1</wastebuf_size_>
         <throughput_>1</throughput_>
         <wastepref_>2.0</wastepref_>
       </RecipeExtractor>
@@ -56,21 +58,25 @@
     <name>LWRReactor</name>
     <agent>
       <BatchReactor>
+
         <fuel>         
           <incommodity>lwr_fresh</incommodity>
           <inrecipe>lwr_fresh_fuel</inrecipe>
-          <outcommodity>waste</outcommodity>
+          <outcommodity>lwr_spent</outcommodity>
           <outrecipe>lwr_spent_fuel</outrecipe>
         </fuel>
+
         <processtime>1</processtime>
         <nbatches>1</nbatches>
         <batchsize>1</batchsize>
         <refueltime>0</refueltime>
+
         <commodity_production>
           <commodity>lwr_power</commodity>
           <capacity>.928</capacity>        <!--GWe-y-->
           <cost>64</cost>        <!--$/kWe-y-->
         </commodity_production>
+
       </BatchReactor>
     </agent>
   </prototype>
