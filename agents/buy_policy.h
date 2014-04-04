@@ -20,6 +20,8 @@ class BuyPolicy : public cyclus::Trader {
     const std::vector< std::pair<cyclus::Trade<cyclus::Material>,
     cyclus::Material::Ptr> >& resps);
 
+  virtual void AdjustMatlPrefs(cyclus::PrefMap<cyclus::Material>::type& prefs);
+
  private:
   cyclus::ResourceBuff* buf_;
   cyclus::Composition::Ptr comp_;

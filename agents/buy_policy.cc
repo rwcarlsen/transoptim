@@ -4,6 +4,9 @@ using cyclus::CapacityConstraint;
 using cyclus::Material;
 using cyclus::RequestPortfolio;
 using cyclus::Trade;
+using cyclus::Bid;
+using cyclus::Request;
+using cyclus::PrefMap;
 
 void BuyPolicy::Init(cyclus::ResourceBuff* buf, std::string commod,
                      cyclus::Composition::Ptr c, double pref) {
@@ -41,3 +44,15 @@ void BuyPolicy::AcceptMatlTrades(
   }
 }
 
+void BuyPolicy::AdjustMatlPrefs(PrefMap<Material>::type& prefs) {
+  PrefMap<Material>::type::iterator it;
+  for (it = prefs.begin(); it != prefs.end(); ++it) {
+    Request<Material>::Ptr r = it->first;
+    std::map<Bid<Material>::Ptr, double>::iterator it2;
+    std::map<Bid<Material>::Ptr, double> bids = it->second;
+    for (it2 = it->second.begin(); it != prefs.end(); ++it) {
+      Bid<Material>::Ptr b = it2->first;
+      prefs[r][b] = pref_;
+    }
+  }
+}
