@@ -2,7 +2,7 @@
 
 <simulation>
   <control>
-    <duration>100</duration>
+    <duration>10</duration>
     <startmonth>1</startmonth>
     <startyear>2000</startyear>
     <decay>0</decay>
@@ -45,7 +45,7 @@
         <wastecommod_>waste</wastecommod_>
         <inrecipe_>lwr_spent_fuel</inrecipe_>
         <outrecipe_>lwr_fresh_fuel</outrecipe_>
-        <inbuf_size_>1</inbuf_size_>
+        <inbuf_size_>2</inbuf_size_>
         <outbuf_size_>1</outbuf_size_>
         <wastebuf_size_>1</wastebuf_size_>
         <throughput_>1</throughput_>

@@ -20,18 +20,22 @@ objs = $(source_unique:%.cc=%.o)
 
 ##### primary targets #####
 $(libname): $(objs)
-	$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) -o $@
+	@echo "CXX -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) -o $@"
+	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) -o $@
 
 $(fname).o : $(fname).gen.cpp $(fname).gen.hpp
-	$(CXX) -c -fpic $(CXXFLAGS) $(CPPFLAGS) $(includes) $< -o $@
+	@echo "CXX -c -fpic $(CXXFLAGS) $(CPPFLAGS) $< -o $o"
+	@$(CXX) -c -fpic $(CXXFLAGS) $(CPPFLAGS) $(includes) $< -o $@
 
 $(fname).gen.cpp: $(fname).cc
-	$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
+	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
+	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 	sed -i 's/$(fname).h/$(fname).gen.hpp/' $@
-	$(CXX) -MM $(CXXFLAGS) $(includes) $< > $(fname).d
+	@$(CXX) -MM $(CXXFLAGS) $(includes) $< > $(fname).d
 
 $(fname).gen.hpp: $(fname).h
-	$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
+	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
+	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 
 clean:
 	rm -f *.o *.d
@@ -45,8 +49,9 @@ clean:
 -include $(objs:%.o=%.d)
 
 %.o : %.cc %.h
-	$(CXX) -c -fpic $(CXXFLAGS) $(CPPFLAGS) $(includes) $< -o $@
-	$(CXX) -MM $(CXXFLAGS) $(includes) $< > $*.d
+	@echo "CXX -c -fpic $(CXXFLAGS) $(CPPFLAGS) $< -o $@"
+	@$(CXX) -c -fpic $(CXXFLAGS) $(CPPFLAGS) $(includes) $< -o $@
+	@$(CXX) -MM $(CXXFLAGS) $(includes) $< > $*.d
 
 # disable makes built-in implicit rules
 .SUFFIXES:

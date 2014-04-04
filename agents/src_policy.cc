@@ -57,7 +57,7 @@ void SrcPolicy::GetMatlTrades(
   }
   if (provided > cap_) {
     std::stringstream ss;
-    ss << "source facility is being asked to provide " << provided
+    ss << "SrcPolicy is being asked to provide " << provided
        << " but its capacity is " << cap_ << ".";
     throw cyclus::ValueError(ss.str());
   }

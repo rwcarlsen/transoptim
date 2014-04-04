@@ -16,12 +16,12 @@ void BuyPolicy::Init(cyclus::ResourceBuff* buf, std::string commod,
 std::set<RequestPortfolio<Material>::Ptr>
 BuyPolicy::GetMatlRequests() {
   std::set<RequestPortfolio<Material>::Ptr> ports;
-  if (buf_->space() < cyclus::eps()) {
+  double amt = buf_->space();
+  if (amt < cyclus::eps()) {
     return ports;
   }
 
   RequestPortfolio<Material>::Ptr port(new RequestPortfolio<Material>());
-  double amt = buf_->space();
   Material::Ptr m = Material::CreateUntracked(amt, comp_);
   port->AddRequest(m, this, commod_, pref_);
 
