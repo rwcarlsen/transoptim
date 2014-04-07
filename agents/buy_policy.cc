@@ -52,9 +52,7 @@ void BuyPolicy::AdjustMatlPrefs(PrefMap<Material>::type& prefs) {
     std::map<Bid<Material>::Ptr, double> bids = it->second;
     for (it2 = bids.begin(); it2 != bids.end(); ++it2) {
       Bid<Material>::Ptr b = it2->first;
-      std::cout << "oldpref=" << prefs[r][b] << "\n";
       prefs[r][b] = pref_;
-      std::cout << "newpref=" << pref_ << "\n";
     }
   }
 }
