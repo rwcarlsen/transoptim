@@ -26,7 +26,7 @@ BuyPolicy::GetMatlRequests() {
 
   RequestPortfolio<Material>::Ptr port(new RequestPortfolio<Material>());
   Material::Ptr m = Material::CreateUntracked(amt, comp_);
-  port->AddRequest(m, this, commod_, pref_);
+  port->AddRequest(m, this, commod_);
 
   ports.insert(port);
   CapacityConstraint<Material> cc(amt);
@@ -50,9 +50,11 @@ void BuyPolicy::AdjustMatlPrefs(PrefMap<Material>::type& prefs) {
     Request<Material>::Ptr r = it->first;
     std::map<Bid<Material>::Ptr, double>::iterator it2;
     std::map<Bid<Material>::Ptr, double> bids = it->second;
-    for (it2 = it->second.begin(); it != prefs.end(); ++it) {
+    for (it2 = bids.begin(); it2 != bids.end(); ++it2) {
       Bid<Material>::Ptr b = it2->first;
+      std::cout << "oldpref=" << prefs[r][b] << "\n";
       prefs[r][b] = pref_;
+      std::cout << "newpref=" << pref_ << "\n";
     }
   }
 }
