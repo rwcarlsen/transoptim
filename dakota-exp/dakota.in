@@ -6,9 +6,8 @@ strategy
     single_method
 
 method
-    max_iterations = 100
+    max_iterations = 500
     convergence_tolerance = 1e-4
-
     mesh_adaptive_search
 
 model
@@ -24,8 +23,7 @@ variables
 
 interface
     fork
-        analysis_driver = 'cycdriver'
-    asynchronous
+        analysis_driver = 'cycdriver -spec={{.Spec}}'
 
 responses
     objective_functions = 1

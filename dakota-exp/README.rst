@@ -40,6 +40,30 @@ Note that all cyclus simulation iterations for an optimization run live in a
 single output database safely.  However, multiple optimization runs in a single
 database are NOT supported (yet).
 
+
+Objective/Metric
+==================
+
+The cycdriver binary uses an objective function that approximates a global
+capacity factor::
+
+    M = [cumulative operating time of all agents] / [sim total transacted resource qty]
+
+The goal is to minimize M.
+
+Simulation structure
+=====================
+
+n source facilities are deployed at statically specified times defined in the
+problem spec file. n initial deployment times are specified for sink
+facilities. The optimizer tries to "discover" the best times to deploy n
+sink facilities to minimize the objective. This problem structure was chosen
+so that the global optimum solution (of sink facility build times) could
+easily be analytically determined.  This allows correctness checking of the
+dakota-cyclus optimization process.  The problem structure is such that the
+optimum sink facility deployment schedule is identical to the statically
+chosen source deployment schedule.
+
 Provenance
 ===========
 

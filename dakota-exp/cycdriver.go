@@ -30,6 +30,7 @@ func main() {
 
 	// load problem spec file
 	spec := Spec{}
+	spec["Spec"] = *specfile
 	data, err := ioutil.ReadFile(*specfile)
 	if err != nil {
 		log.Fatal(err)
