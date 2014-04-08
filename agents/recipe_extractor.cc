@@ -1,5 +1,7 @@
 #include "recipe_extractor.h"
 
+#define LG(X) LOG(cyclus::LEV_##X, "RecXtr")
+
 using cyclus::MatQuery;
 using cyclus::Material;
 using cyclus::Composition;
@@ -16,6 +18,8 @@ RecipeExtractor::RecipeExtractor(cyclus::Context* ctx)
       wastepolicy_(this) {}
 
 void RecipeExtractor::DoRegistration() {
+  cyclus::Facility::DoRegistration();
+
   outpolicy_.Init(&outbuf_, outcommod_);
   wastepolicy_.Init(&wastebuf_, wastecommod_);
   inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_), wastepref_);
@@ -29,6 +33,11 @@ void RecipeExtractor::Tick(int time) {
   if (inbuf_.count() == 0) {
     return;
   }
+
+  LG(INFO3) << "RecipeExtractor id=" << id() << " is ticking";
+  LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
+  LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
+  LG(INFO4) << "wastebuf quantity = " << wastebuf_.quantity();
 
   std::vector<Material::Ptr> mats;
   mats = ResCast<Material>(inbuf_.PopN(inbuf_.count()));
