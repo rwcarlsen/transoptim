@@ -60,7 +60,9 @@ void RecipeMixer::Tick(int time) {
   double w1 = Weight(m1->comp());
   double w2 = Weight(m2->comp());
   double wtgt = Weight(context()->GetRecipe(outrecipe_));
-  double frac2 = (wtgt - w1) / (w2 - w1);
+  //double frac2 = (wtgt - w1) / (w2 - w1);
+  // TODO: implement Weight function and uncomment above 1 line and delete below 1 line
+  double frac2 = 0.1;
   double frac1 = 1 - frac2;
 
   // deal with stream quantity and outbuf space constraints

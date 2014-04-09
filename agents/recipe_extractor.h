@@ -25,6 +25,8 @@ class RecipeExtractor : public cyclus::Facility {
   #pragma cyclus var {}
   std::string inrecipe_;
   #pragma cyclus var {}
+  double inpref_;
+  #pragma cyclus var {}
   double inbuf_size_;
   #pragma cyclus var {'capacity': 'inbuf_size_'}
   cyclus::ResourceBuff inbuf_;
@@ -42,8 +44,6 @@ class RecipeExtractor : public cyclus::Facility {
   std::string wastecommod_;
   #pragma cyclus var {}
   double wastebuf_size_;
-  #pragma cyclus var {}
-  double wastepref_;
   #pragma cyclus var {'capacity': 'wastebuf_size_'}
   cyclus::ResourceBuff wastebuf_;
 

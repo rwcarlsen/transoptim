@@ -12,6 +12,7 @@ RecipeExtractor::RecipeExtractor(cyclus::Context* ctx)
       inbuf_size_(0),
       outbuf_size_(0),
       wastebuf_size_(0),
+      inpref_(0),
       throughput_(0),
       inpolicy_(this),
       outpolicy_(this),
@@ -22,7 +23,7 @@ void RecipeExtractor::DoRegistration() {
 
   outpolicy_.Init(&outbuf_, outcommod_);
   wastepolicy_.Init(&wastebuf_, wastecommod_);
-  inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_), wastepref_);
+  inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_), inpref_);
 
   context()->RegisterTrader(&outpolicy_);
   context()->RegisterTrader(&wastepolicy_);

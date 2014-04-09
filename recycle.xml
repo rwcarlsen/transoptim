@@ -50,7 +50,7 @@
         <outbuf_size_>1</outbuf_size_>
         <wastebuf_size_>1</wastebuf_size_>
         <throughput_>1</throughput_>
-        <wastepref_>2.0</wastepref_>
+        <inpref_>2.0</inpref_>
       </RecipeExtractor>
     </agent>
   </prototype>
