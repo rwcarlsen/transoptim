@@ -9,7 +9,7 @@
   </control>
 
   <commodity><name>lwr_fresh</name></commodity>
-  <commodity><name>lwr_fresh_repr</name></commodity>
+  <commodity><name>lwr_mox</name></commodity>
   <commodity><name>lwr_spent</name></commodity>
   <commodity><name>waste</name></commodity>
 
@@ -42,11 +42,11 @@
     <agent>
       <RecipeExtractor>
         <incommod_>lwr_spent</incommod_>
-        <outcommod_>lwr_fresh_repr</outcommod_>
+        <outcommod_>lwr_mox</outcommod_>
         <wastecommod_>waste</wastecommod_>
         <inrecipe_>lwr_spent_fuel</inrecipe_>
         <outrecipe_>lwr_fresh_fuel</outrecipe_>
-        <inbuf_size_>2</inbuf_size_>
+        <inbuf_size_>1</inbuf_size_>
         <outbuf_size_>1</outbuf_size_>
         <wastebuf_size_>1</wastebuf_size_>
         <throughput_>1</throughput_>
@@ -68,15 +68,15 @@
         </fuel>
 
         <fuel>         
-          <incommodity>lwr_fresh_repr</incommodity>
-          <inrecipe>lwr_fresh_fuel</inrecipe>
-          <outcommodity>lwr_spent</outcommodity>
-          <outrecipe>lwr_spent_fuel</outrecipe>
+          <incommodity>lwr_mox</incommodity>
+          <inrecipe>lwr_mox_fuel</inrecipe>
+          <outcommodity>waste</outcommodity>
+          <outrecipe>lwr_mox_fuel</outrecipe>
         </fuel>
 
         <processtime>1</processtime>
         <nbatches>1</nbatches>
-        <batchsize>1</batchsize>
+        <batchsize>2</batchsize>
         <refueltime>0</refueltime>
 
         <commodity_production>
@@ -86,7 +86,7 @@
         </commodity_production>
 
         <commod_pref>
-          <incommodity>lwr_fresh_repr</incommodity>
+          <incommodity>lwr_mox</incommodity>
           <preference>2.0</preference>
         </commod_pref>
         <commod_pref>
@@ -123,6 +123,18 @@
     <basis>mass</basis>
     <nuclide> <id>922350000</id><comp>0.04</comp></nuclide>
     <nuclide><id>922380000</id><comp>0.96</comp></nuclide>
+  </recipe>
+
+  <recipe>
+    <name>lwr_mox_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>0.0027381</comp></nuclide>
+    <nuclide> <id>922380000</id><comp>0.9099619</comp></nuclide>
+    <nuclide> <id>942380000</id> <comp>0.001746</comp> </nuclide>
+    <nuclide> <id>942390000</id> <comp>0.045396</comp> </nuclide>
+    <nuclide> <id>942400000</id> <comp>0.020952</comp> </nuclide>
+    <nuclide> <id>942410000</id> <comp>0.013095</comp> </nuclide>
+    <nuclide> <id>942420000</id> <comp>0.005238</comp> </nuclide>
   </recipe>
 
   <recipe>
