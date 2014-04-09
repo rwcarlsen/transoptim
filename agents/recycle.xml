@@ -45,7 +45,7 @@
         <outcommod_>lwr_mox</outcommod_>
         <wastecommod_>waste</wastecommod_>
         <inrecipe_>lwr_spent_fuel</inrecipe_>
-        <outrecipe_>lwr_fresh_fuel</outrecipe_>
+        <outrecipe_>lwr_mox_fuel</outrecipe_>
         <inbuf_size_>1</inbuf_size_>
         <outbuf_size_>1</outbuf_size_>
         <wastebuf_size_>1</wastebuf_size_>

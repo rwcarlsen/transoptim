@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+
+<simulation>
+  <control>
+    <duration>10</duration>
+    <startmonth>1</startmonth>
+    <startyear>2000</startyear>
+    <decay>0</decay>
+  </control>
+
+  <commodity><name>lwr_fresh</name></commodity>
+  <commodity><name>lwr_mox</name></commodity>
+  <commodity><name>lwr_spent</name></commodity>
+  <commodity><name>depleted_u</name></commodity>
+  <commodity><name>sep_stream</name></commodity>
+  <commodity><name>waste</name></commodity>
+
+  <prototype>
+    <name>FreshFuelFab</name>
+    <agent>
+      <Source>
+        <commod_>lwr_fresh</commod_>
+        <recipe_name_>lwr_fresh_fuel</recipe_name_>
+        <capacity_>10</capacity_>
+      </Source>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>DepletedUSource</name>
+    <agent>
+      <Source>
+        <commod_>depleted_u</commod_>
+        <recipe_name_>depleted_u</recipe_name_>
+        <capacity_>10</capacity_>
+      </Source>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Repository</name>
+    <agent>
+      <Sink>
+        <capacity_>10</capacity_>
+        <in_commods_>
+          <val>waste</val>
+          <val>lwr_spent</val>
+        </in_commods_>
+      </Sink>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Separations</name>
+    <agent>
+      <Separator>
+        <incommod_>lwr_spent</incommod_>
+        <outcommod_>sep_stream</outcommod_>
+        <wastecommod_>waste</wastecommod_>
+        <inrecipe_>dummy</inrecipe_>
+        <inpref_>2.0</inpref_>
+        <inbuf_size_>1</inbuf_size_>
+        <outbuf_size_>1</outbuf_size_>
+        <wastebuf_size_>1</wastebuf_size_>
+        <throughput_>1</throughput_>
+        <nucs_>
+            <val>922350000</val>
+            <val>922380000</val>
+            <val>942380000</val>
+            <val>942390000</val>
+            <val>942400000</val>
+            <val>942410000</val>
+            <val>942420000</val>
+        </nucs_>
+        <effs_>
+            <key>922350000</key>
+            <val>1.0</val>
+            <key>922380000</key>
+            <val>1.0</val>
+            <key>942380000</key>
+            <val>1.0</val>
+            <key>942390000</key>
+            <val>1.0</val>
+            <key>942400000</key>
+            <val>1.0</val>
+            <key>942410000</key>
+            <val>1.0</val>
+            <key>942420000</key>
+            <val>1.0</val>
+        </effs_>
+      </Separator>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>SpentFuelFab</name>
+    <agent>
+      <RecipeMixer>
+        <incommod1_>depleted_u</incommod1_>
+        <incommod2_>sep_stream</incommod2_>
+        <outcommod_>lwr_mox</outcommod_>
+        <inrecipe1_>dummy</inrecipe1_>
+        <inrecipe2_>dummy</inrecipe2_>
+        <outrecipe_>lwr_mox_fuel</outrecipe_>
+        <inbuf1_size_>10</inbuf1_size_>
+        <inbuf2_size_>10</inbuf2_size_>
+        <outbuf_size_>1</outbuf_size_>
+        <throughput_>1</throughput_>
+      </RecipeMixer>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>LWRReactor</name>
+    <agent>
+      <BatchReactor>
+
+        <fuel>         
+          <incommodity>lwr_fresh</incommodity>
+          <inrecipe>lwr_fresh_fuel</inrecipe>
+          <outcommodity>lwr_spent</outcommodity>
+          <outrecipe>lwr_spent_fuel</outrecipe>
+        </fuel>
+
+        <fuel>         
+          <incommodity>lwr_mox</incommodity>
+          <inrecipe>lwr_mox_fuel</inrecipe>
+          <outcommodity>waste</outcommodity>
+          <outrecipe>lwr_mox_fuel</outrecipe>
+        </fuel>
+
+        <processtime>1</processtime>
+        <nbatches>1</nbatches>
+        <batchsize>2</batchsize>
+        <refueltime>0</refueltime>
+
+        <commodity_production>
+          <commodity>lwr_power</commodity>
+          <capacity>.928</capacity>        <!--GWe-y-->
+          <cost>64</cost>        <!--$/kWe-y-->
+        </commodity_production>
+
+        <commod_pref>
+          <incommodity>lwr_mox</incommodity>
+          <preference>2.0</preference>
+        </commod_pref>
+        <commod_pref>
+          <incommodity>lwr_fresh</incommodity>
+          <preference>1.0</preference>
+        </commod_pref>
+
+      </BatchReactor>
+    </agent>
+  </prototype>
+
+  <agent>
+    <name>repo1</name>
+    <prototype>Repository</prototype>
+  </agent>
+
+  <agent>
+    <name>depleted_src1</name>
+    <prototype>DepletedUSource</prototype>
+  </agent>
+
+  <agent>
+    <name>fuelfab1</name>
+    <prototype>FreshFuelFab</prototype>
+  </agent>
+
+  <agent>
+    <name>separations1</name>
+    <prototype>Separations</prototype>
+  </agent>
+
+  <agent>
+    <name>spentfab1</name>
+    <prototype>SpentFuelFab</prototype>
+  </agent>
+
+  <agent>
+    <name>reactor1</name>
+    <prototype>LWRReactor</prototype>
+  </agent>
+
+  <recipe>
+    <name>lwr_fresh_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>0.04</comp></nuclide>
+    <nuclide><id>922380000</id><comp>0.96</comp></nuclide>
+  </recipe>
+
+  <recipe>
+    <name>dummy</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>1.0</comp></nuclide>
+  </recipe>
+
+  <recipe>
+    <name>depleted_u</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>0.003</comp></nuclide>
+    <nuclide><id>922380000</id><comp>0.997</comp></nuclide>
+  </recipe>
+
+  <recipe>
+    <name>lwr_mox_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>0.0027381</comp></nuclide>
+    <nuclide> <id>922380000</id><comp>0.9099619</comp></nuclide>
+    <nuclide> <id>942380000</id> <comp>0.001746</comp> </nuclide>
+    <nuclide> <id>942390000</id> <comp>0.045396</comp> </nuclide>
+    <nuclide> <id>942400000</id> <comp>0.020952</comp> </nuclide>
+    <nuclide> <id>942410000</id> <comp>0.013095</comp> </nuclide>
+    <nuclide> <id>942420000</id> <comp>0.005238</comp> </nuclide>
+  </recipe>
+
+  <recipe>
+    <name>lwr_spent_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id> <comp>156.729</comp> </nuclide>
+    <nuclide> <id>922360000</id> <comp>102.103</comp> </nuclide>
+    <nuclide> <id>922380000</id> <comp>18280.324</comp> </nuclide>
+    <nuclide> <id>932370000</id> <comp>13.656</comp> </nuclide>
+    <nuclide> <id>942380000</id> <comp>5.043</comp> </nuclide>
+    <nuclide> <id>942390000</id> <comp>106.343</comp> </nuclide>
+    <nuclide> <id>942400000</id> <comp>41.357</comp> </nuclide>
+    <nuclide> <id>942410000</id> <comp>36.477</comp> </nuclide>
+    <nuclide> <id>942420000</id> <comp>15.387</comp> </nuclide>
+    <nuclide> <id>952410000</id> <comp>1.234</comp> </nuclide>
+    <nuclide> <id>952430000</id> <comp>3.607</comp> </nuclide>
+    <nuclide> <id>962440000</id> <comp>0.431</comp> </nuclide>
+    <nuclide> <id>962450000</id> <comp>1.263</comp> </nuclide>
+  </recipe> 
+</simulation>

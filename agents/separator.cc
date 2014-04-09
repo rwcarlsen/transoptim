@@ -13,6 +13,7 @@ using cyclus::compmath::Normalize;
 Separator::Separator(cyclus::Context* ctx)
     : cyclus::Facility(ctx),
       inbuf_size_(0),
+      inpref_(0),
       outbuf_size_(0),
       wastebuf_size_(0),
       throughput_(0),
@@ -25,7 +26,7 @@ void Separator::DoRegistration() {
 
   outpolicy_.Init(&outbuf_, outcommod_);
   wastepolicy_.Init(&wastebuf_, wastecommod_);
-  inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_));
+  inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_), inpref_);
 
   context()->RegisterTrader(&outpolicy_);
   context()->RegisterTrader(&wastepolicy_);
@@ -56,12 +57,16 @@ void Separator::Tick(int time) {
   for (it = cm.begin(); it != cm.end(); ++it) {
     Nuc n = it->first;
     if (nucs_.count(n) == 0) {
-      cm.erase(n);
+      cm[n] = 0;
     } else {
       cm[n] *= effs_[n];
+      LG(INFO5) << "extracting qty " << cm[n] << " of nuc " << n << " (eff=" << effs_[n] << ")";
       qty += cm[n];
     }
   }
+
+  LG(INFO4) << "extracting total qty " << qty << " from inbuf";
+
   Composition::Ptr c = Composition::CreateFromMass(cm);
   Material::Ptr keep = m->ExtractComp(qty, c);
 

@@ -25,6 +25,8 @@ class Separator : public cyclus::Facility {
   #pragma cyclus var {}
   std::string inrecipe_;
   #pragma cyclus var {}
+  double inpref_;
+  #pragma cyclus var {}
   double inbuf_size_;
   #pragma cyclus var {'capacity': 'inbuf_size_'}
   cyclus::ResourceBuff inbuf_;
