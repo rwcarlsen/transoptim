@@ -38,6 +38,7 @@ clean:
 lib%.so : %.foo $(objs)
 	@echo "CXX -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) $< -o $@"
 	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) $< -o $@
+	@cp $@ `echo $@ | sed 's/_\(.\)/\u\1/' | sed 's/lib\(.\)\(.*\)\.so/lib\u\1\2.so/'`
 
 %.o : %.cc %.h
 	@echo "CXX -c -fpic $(CXXFLAGS) $(CPPFLAGS) $< -o $@"
