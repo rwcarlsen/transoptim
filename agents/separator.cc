@@ -56,7 +56,7 @@ void Separator::Tick(int time) {
   double qty = 0;
   for (it = cm.begin(); it != cm.end(); ++it) {
     Nuc n = it->first;
-    if (nucs_.count(n) == 0) {
+    if (effs_.count(n) == 0) {
       cm[n] = 0;
     } else {
       cm[n] *= effs_[n];

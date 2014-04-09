@@ -1,5 +1,5 @@
 
-cyclus_root = /home/r/cyc/install
+cyclus_root = /home/robert/cyc/install
 modules = recipe_extractor recipe_mixer separator
 
 ##### dependency config #####
@@ -26,7 +26,7 @@ all: $(libnames)
 
 clean:
 	rm -f *.o *.d
-	rm -f $(libnames)
+	rm -f *.so
 	rm -f *.gen.c*
 	rm -f *.gen.h*
 

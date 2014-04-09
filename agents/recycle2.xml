@@ -63,30 +63,14 @@
         <outbuf_size_>1</outbuf_size_>
         <wastebuf_size_>1</wastebuf_size_>
         <throughput_>1</throughput_>
-        <nucs_>
-            <val>922350000</val>
-            <val>922380000</val>
-            <val>942380000</val>
-            <val>942390000</val>
-            <val>942400000</val>
-            <val>942410000</val>
-            <val>942420000</val>
-        </nucs_>
         <effs_>
-            <key>922350000</key>
-            <val>1.0</val>
-            <key>922380000</key>
-            <val>1.0</val>
-            <key>942380000</key>
-            <val>1.0</val>
-            <key>942390000</key>
-            <val>1.0</val>
-            <key>942400000</key>
-            <val>1.0</val>
-            <key>942410000</key>
-            <val>1.0</val>
-            <key>942420000</key>
-            <val>1.0</val>
+            <key>922350000</key><val>1.0</val>
+            <key>922380000</key><val>1.0</val>
+            <key>942380000</key><val>1.0</val>
+            <key>942390000</key><val>1.0</val>
+            <key>942400000</key><val>1.0</val>
+            <key>942410000</key><val>1.0</val>
+            <key>942420000</key><val>1.0</val>
         </effs_>
       </Separator>
     </agent>

@@ -46,8 +46,6 @@ class Separator : public cyclus::Facility {
   cyclus::ResourceBuff wastebuf_;
 
   #pragma cyclus var {}
-  std::set<int> nucs_;
-  #pragma cyclus var {}
   std::map<int, double> effs_;
 
   #pragma cyclus var {}
