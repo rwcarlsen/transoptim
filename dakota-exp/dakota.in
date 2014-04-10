@@ -1,3 +1,4 @@
+{{$dot := .}}
 
 strategy
     graphics
@@ -7,13 +8,19 @@ strategy
 
 method
     max_iterations = 500
-    convergence_tolerance = 1e-4
-    mesh_adaptive_search
+    convergence_tolerance = 1e-5
+
+    linear_inequality_constraint_matrix = {{range $i, $val := .InitialSinks}}{{range $j, $val2 := $dot.InitialSinks}}{{if eq $j $i}} 1{{else if eq $j ($dot.Decr $i)}} -1{{else}} 0{{end}}{{end}}
+                                          {{end}}
+    linear_inequality_lower_bounds = {{range $i, $val := .InitialSinks}} 0{{end}}
+    linear_inequality_upper_bounds = {{range $i, $val := .InitialSinks}} 1.e+6{{end}}
+
+    asynch_pattern_search
+        initial_delta = {{.SimDur}}
 
 model
     single
 
-{{$dot := .}}
 variables
     discrete_design_range = {{len .InitialSinks}}
         initial_point     {{range .InitialSinks}}{{.}} {{end}}
@@ -27,8 +34,5 @@ interface
 
 responses
     objective_functions = 1
-    numerical_gradients
-        method_source dakota
-        interval_type forward
-        fd_gradient_step_size = 1.e-5
+    no_gradients
     no_hessians

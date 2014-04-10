@@ -21,6 +21,10 @@ var dakotaGen = flag.Bool("init", false, "true to generate the dakota input file
 
 type Spec map[string]interface{}
 
+func (_ Spec) Decr(i int) int {
+	return i - 1
+}
+
 func main() {
 	flag.Parse()
 	log.SetFlags(log.Lshortfile)
@@ -132,7 +136,6 @@ func ParseParams(spec Spec, fname string) error {
 	s := string(data)
 	lines := strings.Split(s, "\n")
 	for i, l := range lines {
-		fmt.Println(l)
 		l = strings.TrimSpace(l)
 		lines[i] = l
 		fields := strings.Split(l, " ")
@@ -147,11 +150,12 @@ func ParseParams(spec Spec, fname string) error {
 
 		switch f := fields[1]; {
 		case strings.HasPrefix(f, "x"):
-			val, err := strconv.Atoi(fields[0])
+			val, err := strconv.ParseFloat(fields[0], 64)
 			if err != nil {
 				return err
 			}
-			vals = append(vals, val)
+			vals = append(vals, int(val))
+			fmt.Printf("%v: %v\n", fields[1], val)
 		case f == "eval_id":
 			h = fields[0]
 		}
