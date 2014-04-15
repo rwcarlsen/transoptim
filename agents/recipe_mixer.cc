@@ -1,4 +1,5 @@
 #include "recipe_mixer.h"
+#include "data.h"
 
 #define LG(X) LOG(cyclus::LEV_##X, "RecMix")
 
@@ -8,6 +9,7 @@ using cyclus::CompMap;
 using cyclus::Composition;
 using cyclus::ResCast;
 using cyclus::compmath::Normalize;
+using pyne::simple_xs;
 
 RecipeMixer::RecipeMixer(cyclus::Context* ctx)
   : cyclus::Facility(ctx),
@@ -60,10 +62,12 @@ void RecipeMixer::Tick(int time) {
   double w1 = Weight(m1->comp());
   double w2 = Weight(m2->comp());
   double wtgt = Weight(context()->GetRecipe(outrecipe_));
-  //double frac2 = (wtgt - w1) / (w2 - w1);
-  // TODO: implement Weight function and uncomment above 1 line and delete below 1 line
-  double frac2 = 0.1;
+  double frac2 = (wtgt - w1) / (w2 - w1);
   double frac1 = 1 - frac2;
+
+  LG(INFO4) << "target weight = " << wtgt;
+  LG(INFO4) << "filler: weight= " << w1 << ", frac=" << frac1;
+  LG(INFO4) << "fissile: weight= " << w2 << ", frac=" << frac2;
 
   // deal with stream quantity and outbuf space constraints
   double ratio1 = frac1 * qty / m1->quantity();
@@ -72,42 +76,66 @@ void RecipeMixer::Tick(int time) {
     // not constrained by inbuf quantities
   } else if (ratio1 > ratio2) {
     // constrained by inbuf1
+    LG(INFO5) << "Constrained by incommod '" << incommod1_
+              << "' - reducing qty from " << qty
+              << " to " << m1->quantity() / frac1;
     qty = m1->quantity() / frac1;
   } else {
     // constrained by inbuf2
+    LG(INFO5) << "Constrained by incommod '" << incommod2_
+              << "' - reducing qty from " << qty
+              << " to " << m2->quantity() / frac2;
     qty = m2->quantity() / frac2;
   }
 
   Material::Ptr mix = m1->ExtractQty(frac1 * qty);
   mix->Absorb(m2->ExtractQty(frac2 * qty));
 
+  MatQuery mq(mix);
+  LG(INFO4) << "Mixed " << mix->quantity() << " kg to recipe";
+  LG(INFO5) << " u238 = " << mq.mass_frac(922380000);
+  LG(INFO5) << " u235 = " << mq.mass_frac(922350000);
+  LG(INFO5) << "Pu239 = " << mq.mass_frac(942390000);
+
   outbuf_.Push(mix);
-  inbuf1_.Push(m1);
-  inbuf2_.Push(m2);
+  if (m1->quantity() > 0) {
+    inbuf1_.Push(m1);
+  }
+  if (m2->quantity() > 0) {
+    inbuf2_.Push(m2);
+  }
 }
 
 double RecipeMixer::Weight(Composition::Ptr c) {
   CompMap cm = c->mass();
   Normalize(&cm);
 
-  double fiss_u238; // = xs_fiss(u238)...
-  double absorb_u238; // = xs_absorb(u238)...
-  double nu_u238; // = nu(u238)...
+  double fiss_u238 = simple_xs("u238", "fission", "thermal");
+  double absorb_u238 = simple_xs("u238", "absorption", "thermal");
+  double nu_u238 = 0;
   double p_u238 = nu_u238 * fiss_u238 - absorb_u238;
 
-  double fiss_pu239; // = xs_fiss(u238)...
-  double absorb_pu239; // = xs_absorb(u238)...
-  double nu_pu239; // = nu(u238)...
-  double p_pu239 = nu_u238 * fiss_u238 - absorb_u238;
+  double fiss_pu239 = simple_xs("Pu239", "fission", "thermal");
+  double absorb_pu239 = simple_xs("Pu239", "absorption", "thermal");
+  double nu_pu239 = 2.85;
+  double p_pu239 = nu_pu239 * fiss_pu239 - absorb_pu239;
 
   CompMap::iterator it;
   double w = 0;
   for (it = cm.begin(); it != cm.end(); ++it) {
-    double fiss; // = xs_fiss(cm->first)...
-    double absorb; // = xs_absorb(cm->first)...
-    double nu; // = nu(cm->first)...
+    cyclus::Nuc nuc = it->first;
+    double nu = 0;
+    if (nuc == 922350000) {
+      nu = 2.4;
+    } else if (nuc == 922330000) {
+      nu = 2.5;
+    } else if (nuc == 942390000) {
+      nu = 2.85;
+    }
+    double fiss = simple_xs(nuc, "fission", "thermal");
+    double absorb = simple_xs(nuc, "absorption", "thermal");
     double p = nu * fiss - absorb;
-    w += (p - p_u238) / (p_pu239 - p_u238);
+    w += it->second * (p - p_u238) / (p_pu239 - p_u238);
   }
   return w;
 }
@@ -115,4 +143,6 @@ double RecipeMixer::Weight(Composition::Ptr c) {
 extern "C" cyclus::Agent* ConstructRecipeMixer(cyclus::Context* ctx) {
   return new RecipeMixer(ctx);
 }
+
+
 

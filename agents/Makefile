@@ -1,5 +1,5 @@
 
-cyclus_root = /home/robert/cyc/install
+cyclus_root = /home/r/cyc/install
 modules = recipe_extractor recipe_mixer separator
 
 ##### dependency config #####
@@ -32,9 +32,6 @@ clean:
 
 ##### pattern rules to build all object files from source #####
 
-# pull in dependency info for *existing* .o files
--include $(objs:%.o=%.d)
-
 lib%.so : %.foo $(objs)
 	@echo "CXX -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) $< -o $@"
 	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $(objs) $< -o $@
@@ -43,7 +40,6 @@ lib%.so : %.foo $(objs)
 %.o : %.cc %.h
 	@echo "CXX -c -fpic $(CXXFLAGS) $(CPPFLAGS) $< -o $@"
 	@$(CXX) -c -fpic $(CXXFLAGS) $(CPPFLAGS) $(includes) $< -o $@
-	@$(CXX) -MM $(CXXFLAGS) $(includes) $< > $*.d
 
 %.foo : %.gen.cc %.gen.h
 	@echo "CXX -c -fpic $(CXXFLAGS) $(CPPFLAGS) $< -o $o"
@@ -53,7 +49,6 @@ lib%.so : %.foo $(objs)
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
 	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 	sed -i 's/$*.h/$*.gen.h/' $@
-	@$(CXX) -MM $(CXXFLAGS) $(includes) $< > $(fname).d
 
 %.gen.h: %.h
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
