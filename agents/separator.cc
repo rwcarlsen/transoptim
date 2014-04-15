@@ -34,14 +34,13 @@ void Separator::DoRegistration() {
 }
 
 void Separator::Tick(int time) {
-  if (inbuf_.count() == 0) {
-    return;
-  }
-
   LG(INFO3) << "Separator id=" << id() << " is ticking";
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
   LG(INFO4) << "wastebuf quantity = " << wastebuf_.quantity();
+  if (inbuf_.count() == 0) {
+    return;
+  }
 
   std::vector<Material::Ptr> mats;
   mats = ResCast<Material>(inbuf_.PopN(inbuf_.count()));

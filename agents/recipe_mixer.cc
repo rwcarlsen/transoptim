@@ -34,15 +34,14 @@ void RecipeMixer::DoRegistration() {
 }
 
 void RecipeMixer::Tick(int time) {
-  double qty = std::min(throughput_, outbuf_.space());
-  if (inbuf1_.count() == 0 || inbuf2_.count() == 0 || qty < cyclus::eps()) {
-    return;
-  }
-
   LG(INFO3) << "RecipeMixer id=" << id() << " is ticking";
   LG(INFO4) << "inbuf1 quantity = " << inbuf1_.quantity();
   LG(INFO4) << "inbuf2 quantity = " << inbuf2_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
+  double qty = std::min(throughput_, outbuf_.space());
+  if (inbuf1_.count() == 0 || inbuf2_.count() == 0 || qty < cyclus::eps()) {
+    return;
+  }
 
   // combine inbuf resources to single mats for querying
   std::vector<Material::Ptr> mats;
