@@ -13,6 +13,7 @@ class RecipeMixer : public cyclus::Facility {
   virtual std::string str() {return "";};
 
   virtual void DoRegistration();
+  void Decommission();
 
   #pragma cyclus
 

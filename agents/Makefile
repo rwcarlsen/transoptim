@@ -1,6 +1,6 @@
 
-cyclus_root = /home/robert/cyc/install
-modules = recipe_extractor recipe_mixer separator animal forest
+cyclus_root = /home/r/cyc/install
+modules = recipe_extractor recipe_mixer separator animal
 
 ##### dependency config #####
 includes += -I$(cyclus_root)/include/cyclus

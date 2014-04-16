@@ -14,11 +14,13 @@
   <commodity><name>deadwolf</name></commodity>
 
   <prototype>
-    <name>PrettyForest</name>
+    <name>Forest</name>
     <agent>
-      <Forest>
+      <Source>
         <commod_>greens</commod_>
-      </Forest>
+        <recipe_name_>food</recipe_name_>
+        <capacity_>1000000</capacity_>
+      </Source>
     </agent>
   </prototype>
 
@@ -26,6 +28,7 @@
     <name>Rabbit</name>
     <agent>
       <Animal>
+          <inrecipe_>food</inrecipe_>
           <incommod_>greens</incommod_>
           <outcommod_>rabbits</outcommod_>
       </Animal>
@@ -36,6 +39,7 @@
     <name>Wolf</name>
     <agent>
       <Animal>
+          <inrecipe_>food</inrecipe_>
           <incommod_>rabbits</incommod_>
           <outcommod_>deadwolf</outcommod_>
       </Animal>
@@ -56,6 +60,14 @@
   <agent> <name>wolf5</name> <prototype>Wolf</prototype> </agent>
   <agent> <name>wolf6</name> <prototype>Wolf</prototype> </agent>
 
-  <agent> <name>forest1</name> <prototype>PrettyForest</prototype> </agent>
+  <agent> <name>forest1</name> <prototype>Forest</prototype> </agent>
+
+  <recipe>
+    <name>food</name>
+    <basis>mass</basis>
+    <nuclide> <id>10010000</id><comp>.1</comp></nuclide>
+    <nuclide><id>80160000</id><comp>.7</comp></nuclide>
+    <nuclide><id>60120000</id><comp>.1</comp></nuclide>
+  </recipe>
 
 </simulation>

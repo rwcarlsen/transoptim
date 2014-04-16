@@ -33,6 +33,13 @@ void Separator::DoRegistration() {
   context()->RegisterTrader(&inpolicy_);
 }
 
+void Separator::Decommission() {
+  context()->UnregisterTrader(&outpolicy_);
+  context()->UnregisterTrader(&wastepolicy_);
+  context()->UnregisterTrader(&inpolicy_);
+  cyclus::Facility::Decommission();
+}
+
 void Separator::Tick(int time) {
   LG(INFO3) << "Separator id=" << id() << " is ticking";
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
