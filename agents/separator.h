@@ -13,7 +13,7 @@ class Separator : public cyclus::Facility {
   virtual std::string str() {return "";};
 
   virtual void DoRegistration();
-  void Decommission();
+  virtual void Decommission();
 
   #pragma cyclus
 

@@ -10,9 +10,9 @@ Animal::Animal(cyclus::Context* ctx)
   : cyclus::Facility(ctx),
     bufsize_(0),
     burnrate_(0),
+    num_kids_(0),
     full_grown_(0),
     inpolicy_(this),
-    for_sale_(0),
     outpolicy_(this) {}
 
 void Animal::DoRegistration() {
@@ -23,7 +23,7 @@ void Animal::DoRegistration() {
   context()->RegisterTrader(&inpolicy_);
 }
 
-void Animal::Build() {
+void Animal::Build(cyclus::Agent* parent) {
   cyclus::Facility::Build();
   Material::Ptr m;
   m = Material::Create(this, bufsize_, context()->GetRecipe(inrecipe_));
@@ -47,30 +47,26 @@ void Animal::Tock(int t) {
     LG(INFO3) << LABEL << "is dying of starvation";
     context()->SchedDecom(this);
     return;
-  } else if (age >= lifespan_) {
+  } else if (age > lifespan_) {
     LG(INFO3) << LABEL << "is dying of old age";
     context()->SchedDecom(this);
     return;
-  } else if (outbuf_.empty() && for_sale_ != 0) {
+  } else if (outbuf_.quantity() < burnrate_ && age > 0) {
     LG(INFO3) << LABEL << "got eaten";
     context()->SchedDecom(this);
     return;
   }
   
-  if (age == full_grown_) {
-    LG(INFO3) << LABEL << "is reproducing";
-    context()->SchedBuild(this, prototype());
-    context()->SchedBuild(this, prototype());
+  if (age >= full_grown_) {
+    LG(INFO3) << LABEL << "is having " << num_kids_ << " children";
+    for (int i = 0; i < num_kids_; ++i) {
+      context()->SchedBuild(this, prototype());
+    }
   }
 
-  outbuf_.PopQty(outbuf_.count());
-  for_sale_ = 0;
-
-  srand(time(NULL));
+  outbuf_.PopN(outbuf_.count());
   cyclus::Manifest mats = inbuf_.PopQty(burnrate_);
-  if (rand() % 2 == 0) {
-    outbuf_.PushAll(mats);
-  }
+  outbuf_.PushAll(mats);
 }
 
 extern "C" cyclus::Agent* ConstructAnimal(cyclus::Context* ctx) {

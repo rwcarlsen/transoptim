@@ -13,8 +13,8 @@ class Animal : public cyclus::Facility {
   virtual std::string str() {return "";};
 
   virtual void DoRegistration();
-  void Build();
-  void Decommission();
+  virtual void Build(cyclus::Agent* parent = NULL);
+  virtual void Decommission();
 
   #pragma cyclus
 
@@ -24,9 +24,11 @@ class Animal : public cyclus::Facility {
  private:
   #pragma cyclus var {'default': 1}
   double bufsize_;
+  #pragma cyclus var {'default': 2}
+  int num_kids_;
   #pragma cyclus var {'default': 0.5}
   double burnrate_;
-  #pragma cyclus var {'default': 3}
+  #pragma cyclus var {'default': 2}
   double full_grown_;
   #pragma cyclus var {'default': 4}
   double lifespan_;

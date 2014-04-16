@@ -1,6 +1,7 @@
 
 cyclus_root = /home/r/cyc/install
 modules = recipe_extractor recipe_mixer separator animal
+CXXFLAGS += -g
 
 ##### dependency config #####
 includes += -I$(cyclus_root)/include/cyclus

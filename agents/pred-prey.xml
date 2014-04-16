@@ -2,7 +2,7 @@
 
 <simulation>
   <control>
-    <duration>100</duration>
+    <duration>50</duration>
     <startmonth>1</startmonth>
     <startyear>2000</startyear>
     <decay>0</decay>
@@ -42,24 +42,33 @@
           <inrecipe_>food</inrecipe_>
           <incommod_>rabbits</incommod_>
           <outcommod_>deadwolf</outcommod_>
+          <bufsize_>3</bufsize_>
+          <burnrate_>1.5</burnrate_>
+          <full_grown_>5</full_grown_>
+          <lifespan_>6</lifespan_>
       </Animal>
     </agent>
   </prototype>
 
-  <agent> <name>rabbit1</name> <prototype>Rabbit</prototype> </agent>
-  <agent> <name>rabbit2</name> <prototype>Rabbit</prototype> </agent>
-  <agent> <name>rabbit3</name> <prototype>Rabbit</prototype> </agent>
-  <agent> <name>rabbit4</name> <prototype>Rabbit</prototype> </agent>
-  <agent> <name>rabbit5</name> <prototype>Rabbit</prototype> </agent>
-  <agent> <name>rabbit6</name> <prototype>Rabbit</prototype> </agent>
+  <prototype>
+    <name>Deployer</name>
+    <agent>
+      <DeployInst>
+          <buildorder>
+              <prototype>Rabbit</prototype>
+              <number>80</number>
+              <date>1</date>
+          </buildorder>
+          <buildorder>
+              <prototype>Wolf</prototype>
+              <number>20</number>
+              <date>4</date>
+          </buildorder>
+      </DeployInst>
+    </agent>
+  </prototype>
 
-  <agent> <name>wolf1</name> <prototype>Wolf</prototype> </agent>
-  <agent> <name>wolf2</name> <prototype>Wolf</prototype> </agent>
-  <agent> <name>wolf3</name> <prototype>Wolf</prototype> </agent>
-  <agent> <name>wolf4</name> <prototype>Wolf</prototype> </agent>
-  <agent> <name>wolf5</name> <prototype>Wolf</prototype> </agent>
-  <agent> <name>wolf6</name> <prototype>Wolf</prototype> </agent>
-
+  <agent> <name>deploy1</name> <prototype>Deployer</prototype> </agent>
   <agent> <name>forest1</name> <prototype>Forest</prototype> </agent>
 
   <recipe>
