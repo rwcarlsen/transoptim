@@ -26,14 +26,10 @@ class Animal : public cyclus::Facility {
   double bufsize_;
   #pragma cyclus var {'default': 2}
   int num_kids_;
-  #pragma cyclus var {'default': 0.5}
-  double burnrate_;
   #pragma cyclus var {'default': 2}
   double full_grown_;
   #pragma cyclus var {'default': 4}
   double lifespan_;
-  #pragma cyclus var {'default': 0}
-  int for_sale_;
 
   #pragma cyclus var {}
   std::string incommod_;

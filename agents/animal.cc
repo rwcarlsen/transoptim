@@ -9,7 +9,6 @@ using cyclus::Material;
 Animal::Animal(cyclus::Context* ctx)
   : cyclus::Facility(ctx),
     bufsize_(0),
-    burnrate_(0),
     num_kids_(0),
     full_grown_(0),
     inpolicy_(this),
@@ -43,7 +42,7 @@ void Animal::Tock(int t) {
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
   int age = context()->time() - enter_time();
-  if (inbuf_.quantity() < burnrate_) {
+  if (inbuf_.space() > cyclus::eps()) {
     LG(INFO3) << LABEL << "is dying of starvation";
     context()->SchedDecom(this);
     return;
@@ -51,7 +50,7 @@ void Animal::Tock(int t) {
     LG(INFO3) << LABEL << "is dying of old age";
     context()->SchedDecom(this);
     return;
-  } else if (outbuf_.quantity() < burnrate_ && age > 0) {
+  } else if (inbuf_.quantity() - outbuf_.quantity() > cyclus::eps() && age > 0) {
     LG(INFO3) << LABEL << "got eaten";
     context()->SchedDecom(this);
     return;
@@ -65,7 +64,7 @@ void Animal::Tock(int t) {
   }
 
   outbuf_.PopN(outbuf_.count());
-  cyclus::Manifest mats = inbuf_.PopQty(burnrate_);
+  cyclus::Manifest mats = inbuf_.PopN(inbuf_.count());
   outbuf_.PushAll(mats);
 }
 

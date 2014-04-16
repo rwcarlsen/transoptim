@@ -2,7 +2,7 @@
 
 <simulation>
   <control>
-    <duration>50</duration>
+    <duration>200</duration>
     <startmonth>1</startmonth>
     <startyear>2000</startyear>
     <decay>0</decay>
@@ -19,7 +19,7 @@
       <Source>
         <commod_>greens</commod_>
         <recipe_name_>food</recipe_name_>
-        <capacity_>1000000</capacity_>
+        <capacity_>100</capacity_>
       </Source>
     </agent>
   </prototype>
@@ -31,6 +31,11 @@
           <inrecipe_>food</inrecipe_>
           <incommod_>greens</incommod_>
           <outcommod_>rabbits</outcommod_>
+
+          <bufsize_>1</bufsize_>
+          <lifespan_>4</lifespan_>
+          <full_grown_>1</full_grown_>
+          <num_kids_>3</num_kids_>
       </Animal>
     </agent>
   </prototype>
@@ -42,10 +47,11 @@
           <inrecipe_>food</inrecipe_>
           <incommod_>rabbits</incommod_>
           <outcommod_>deadwolf</outcommod_>
-          <bufsize_>3</bufsize_>
-          <burnrate_>1.5</burnrate_>
-          <full_grown_>5</full_grown_>
-          <lifespan_>6</lifespan_>
+
+          <bufsize_>1</bufsize_>
+          <lifespan_>7</lifespan_>
+          <full_grown_>6</full_grown_>
+          <num_kids_>1</num_kids_>
       </Animal>
     </agent>
   </prototype>
@@ -54,16 +60,12 @@
     <name>Deployer</name>
     <agent>
       <DeployInst>
-          <buildorder>
-              <prototype>Rabbit</prototype>
-              <number>80</number>
-              <date>1</date>
-          </buildorder>
-          <buildorder>
-              <prototype>Wolf</prototype>
-              <number>20</number>
-              <date>4</date>
-          </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>10</number> <date>1</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>10</number> <date>2</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>10</number> <date>3</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>10</number> <date>4</date> </buildorder>
+
+          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>4</date> </buildorder>
       </DeployInst>
     </agent>
   </prototype>
