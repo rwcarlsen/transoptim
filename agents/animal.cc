@@ -36,27 +36,29 @@ void Animal::Decommission() {
   cyclus::Facility::Decommission();
 }
 
+#define LABEL "Ainimal (id=" << id() << ", proto=" << prototype() << ") "
+
 void Animal::Tock(int t) {
-  LG(INFO3) << "Animal id=" << id() << " is tocking";
+  LG(INFO3) << LABEL << "is tocking";
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
   int age = context()->time() - enter_time();
   if (inbuf_.quantity() < burnrate_) {
-    LG(INFO3) << "Animal id=" << id() << " is dying of starvation";
+    LG(INFO3) << LABEL << "is dying of starvation";
     context()->SchedDecom(this);
     return;
   } else if (age >= lifespan_) {
-    LG(INFO3) << "Animal id=" << id() << " is dying of old age";
+    LG(INFO3) << LABEL << "is dying of old age";
     context()->SchedDecom(this);
     return;
   } else if (outbuf_.empty() && for_sale_ != 0) {
-    LG(INFO3) << "Animal id=" << id() << " got eaten";
+    LG(INFO3) << LABEL << "got eaten";
     context()->SchedDecom(this);
     return;
   }
   
   if (age == full_grown_) {
-    LG(INFO3) << "Animal id=" << id() << " is reproducing";
+    LG(INFO3) << LABEL << "is reproducing";
     context()->SchedBuild(this, prototype());
     context()->SchedBuild(this, prototype());
   }
