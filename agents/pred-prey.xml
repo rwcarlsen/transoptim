@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+
+<simulation>
+  <control>
+    <duration>100</duration>
+    <startmonth>1</startmonth>
+    <startyear>2000</startyear>
+    <decay>0</decay>
+  </control>
+
+  <commodity><name>greens</name></commodity>
+  <commodity><name>rabbits</name></commodity>
+  <commodity><name>wolves</name></commodity>
+  <commodity><name>deadwolf</name></commodity>
+
+  <prototype>
+    <name>PrettyForest</name>
+    <agent>
+      <Forest>
+        <commod_>greens</commod_>
+      </Forest>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Rabbit</name>
+    <agent>
+      <Animal>
+          <incommod_>greens</incommod_>
+          <outcommod_>rabbits</outcommod_>
+      </Animal>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Wolf</name>
+    <agent>
+      <Animal>
+          <incommod_>rabbits</incommod_>
+          <outcommod_>deadwolf</outcommod_>
+      </Animal>
+    </agent>
+  </prototype>
+
+  <agent> <name>rabbit1</name> <prototype>Rabbit</prototype> </agent>
+  <agent> <name>rabbit2</name> <prototype>Rabbit</prototype> </agent>
+  <agent> <name>rabbit3</name> <prototype>Rabbit</prototype> </agent>
+  <agent> <name>rabbit4</name> <prototype>Rabbit</prototype> </agent>
+  <agent> <name>rabbit5</name> <prototype>Rabbit</prototype> </agent>
+  <agent> <name>rabbit6</name> <prototype>Rabbit</prototype> </agent>
+
+  <agent> <name>wolf1</name> <prototype>Wolf</prototype> </agent>
+  <agent> <name>wolf2</name> <prototype>Wolf</prototype> </agent>
+  <agent> <name>wolf3</name> <prototype>Wolf</prototype> </agent>
+  <agent> <name>wolf4</name> <prototype>Wolf</prototype> </agent>
+  <agent> <name>wolf5</name> <prototype>Wolf</prototype> </agent>
+  <agent> <name>wolf6</name> <prototype>Wolf</prototype> </agent>
+
+  <agent> <name>forest1</name> <prototype>PrettyForest</prototype> </agent>
+
+</simulation>

@@ -1,6 +1,6 @@
 
-cyclus_root = /home/r/cyc/install
-modules = recipe_extractor recipe_mixer separator
+cyclus_root = /home/robert/cyc/install
+modules = recipe_extractor recipe_mixer separator animal forest
 
 ##### dependency config #####
 includes += -I$(cyclus_root)/include/cyclus
@@ -23,6 +23,7 @@ objs = $(filter-out $(module_tmp),$(objs_tmp))
 
 ##### primary targets #####
 all: $(libnames)
+	ls | grep 'lib[a-z].\+\.so' | xargs rm -f
 
 clean:
 	rm -f *.o *.d
