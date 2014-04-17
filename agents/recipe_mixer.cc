@@ -1,5 +1,5 @@
 #include "recipe_mixer.h"
-#include "fuel_match.h"
+#include "kitlus/fuel_match.h"
 
 #define LG(X) LOG(cyclus::LEV_##X, "RecMix")
 
@@ -62,7 +62,7 @@ void RecipeMixer::Tick(int time) {
 
   // determine frac needed from each input stream
   Composition::Ptr tgt = context()->GetRecipe(outrecipe_);
-  double frac2 = CosiFissileFrac(tgt, m1->comp(), m2->comp());
+  double frac2 = kitlus::CosiFissileFrac(tgt, m1->comp(), m2->comp());
   double frac1 = 1 - frac2;
 
   LG(INFO4) << "filler frac = " << frac1;

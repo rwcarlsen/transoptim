@@ -3,8 +3,11 @@
 
 #include <string>
 #include "cyclus.h"
-#include "sell_policy.h"
-#include "buy_policy.h"
+#include "kitlus/sell_policy.h"
+#include "kitlus/buy_policy.h"
+
+using kitlus::BuyPolicy;
+using kitlus::SellPolicy;
 
 class RecipeExtractor : public cyclus::Facility {
  public:
