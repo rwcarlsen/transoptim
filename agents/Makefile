@@ -1,6 +1,7 @@
 
 cyclus_root = /home/r/cyc/install
 modules = recipe_extractor recipe_mixer separator
+CXXFLAGS += -g
 
 ##### dependency config #####
 includes += -I$(cyclus_root)/include/cyclus
@@ -19,16 +20,20 @@ libnames = $(modules:%=lib%.so)
 
 objs_tmp = $(source_unique:%.cc=%.o)
 module_tmp = $(modules:%=%.o)
-objs = $(filter-out $(module_tmp),$(objs_tmp))
+objs = $(filter-out $(module_tmp) %.gen.o,$(objs_tmp))
+
+$(info objs: $(objs))
 
 ##### primary targets #####
 all: $(libnames)
+	ls | grep 'lib[a-z].\+\.so' | xargs rm -f
 
 clean:
 	rm -f *.o *.d
 	rm -f *.so
 	rm -f *.gen.c*
 	rm -f *.gen.h*
+	rm -f *.foo
 
 ##### pattern rules to build all object files from source #####
 
@@ -53,6 +58,8 @@ lib%.so : %.foo $(objs)
 %.gen.h: %.h
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
 	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
+
+.PRECIOUS: %.gen.h %.gen.cc %.o %.foo
 
 # disable makes built-in implicit rules
 .SUFFIXES:

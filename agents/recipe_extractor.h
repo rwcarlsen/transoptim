@@ -13,6 +13,7 @@ class RecipeExtractor : public cyclus::Facility {
   virtual std::string str() {return "";};
 
   virtual void DoRegistration();
+  virtual void Decommission();
 
   #pragma cyclus
 

@@ -29,6 +29,13 @@ void RecipeMixer::DoRegistration() {
   context()->RegisterTrader(&inpolicy2_);
 }
 
+void RecipeMixer::Decommission() {
+  context()->UnregisterTrader(&outpolicy_);
+  context()->UnregisterTrader(&inpolicy1_);
+  context()->UnregisterTrader(&inpolicy2_);
+  cyclus::Facility::Decommission();
+}
+
 void RecipeMixer::Tick(int time) {
   LG(INFO3) << "RecipeMixer id=" << id() << " is ticking";
   LG(INFO4) << "inbuf1 quantity = " << inbuf1_.quantity();
