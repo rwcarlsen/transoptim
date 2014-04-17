@@ -22,14 +22,21 @@ class Animal : public cyclus::Facility {
   virtual void Tock(int time);
 
  private:
+  /// food eaten per timestep to live
   #pragma cyclus var {'default': 1}
   double bufsize_;
-  #pragma cyclus var {'default': 2}
-  int num_kids_;
-  #pragma cyclus var {'default': 2}
-  double full_grown_;
+  /// number of timsteps between having a single child
+  #pragma cyclus var {'default': 1}
+  int birth_freq_;
+  /// number of timsteps until natural death
   #pragma cyclus var {'default': 4}
-  double lifespan_;
+  int lifespan_;
+  /// probability of being captured
+  #pragma cyclus var {'default': 0.9}
+  double capture_prob_;
+
+  #pragma cyclus var {'default': 0}
+  int for_sale_;
 
   #pragma cyclus var {}
   std::string incommod_;

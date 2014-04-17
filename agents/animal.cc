@@ -9,8 +9,10 @@ using cyclus::Material;
 Animal::Animal(cyclus::Context* ctx)
   : cyclus::Facility(ctx),
     bufsize_(0),
-    num_kids_(0),
-    full_grown_(0),
+    birth_freq_(0),
+    lifespan_(0),
+    capture_prob_(0),
+    for_sale_(0),
     inpolicy_(this),
     outpolicy_(this) {}
 
@@ -44,28 +46,47 @@ void Animal::Tock(int t) {
   int age = context()->time() - enter_time();
   if (inbuf_.space() > cyclus::eps()) {
     LG(INFO3) << LABEL << "is dying of starvation";
+    context()->NewDatum("LifeEvents")
+      ->AddVal("AgentId", id())
+      ->AddVal("Stat", "starved")
+      ->Record();
     context()->SchedDecom(this);
     return;
-  } else if (age > lifespan_) {
+  } else if (age >= lifespan_) {
+    context()->NewDatum("LifeEvents")
+      ->AddVal("AgentId", id())
+      ->AddVal("Stat", "died")
+      ->Record();
     LG(INFO3) << LABEL << "is dying of old age";
     context()->SchedDecom(this);
     return;
-  } else if (inbuf_.quantity() - outbuf_.quantity() > cyclus::eps() && age > 0) {
+  } else if (outbuf_.quantity() < cyclus::eps() && age > 0 && for_sale_ != 0) {
+    context()->NewDatum("LifeEvents")
+      ->AddVal("AgentId", id())
+      ->AddVal("Stat", "eaten")
+      ->Record();
     LG(INFO3) << LABEL << "got eaten";
     context()->SchedDecom(this);
     return;
   }
   
-  if (age >= full_grown_) {
-    LG(INFO3) << LABEL << "is having " << num_kids_ << " children";
-    for (int i = 0; i < num_kids_; ++i) {
-      context()->SchedBuild(this, prototype());
-    }
+  if (age > 0 && age % birth_freq_ == 0) {
+    context()->NewDatum("LifeEvents")
+      ->AddVal("AgentId", id())
+      ->AddVal("Stat", "reproduced")
+      ->Record();
+    LG(INFO3) << LABEL << "is having 1 child";
+    context()->SchedBuild(this, prototype());
   }
 
+  for_sale_ = 0;
   outbuf_.PopN(outbuf_.count());
   cyclus::Manifest mats = inbuf_.PopN(inbuf_.count());
-  outbuf_.PushAll(mats);
+  double r = ((double)(rand() % 1000000)) / 1000000; // between 0 and 1
+  if (r < capture_prob_ * ((double)age / lifespan_)) {
+    for_sale_ = 1;
+    outbuf_.PushAll(mats);
+  }
 }
 
 extern "C" cyclus::Agent* ConstructAnimal(cyclus::Context* ctx) {
