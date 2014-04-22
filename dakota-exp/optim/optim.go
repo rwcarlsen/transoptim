@@ -1,6 +1,10 @@
 package optim
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/gonum/matrix/mat64"
+)
 
 type Prototype string
 
@@ -41,40 +45,44 @@ func (s *Scenario) VarNames() []string {
 	return names
 }
 
-func (s *Scenario) LowerBounds() []float64 {
-	return make([]float64, s.nVars())
+func (s *Scenario) LowerBounds() *mat64.Dense {
+	return mat64.NewDense(s.nVars(), 1, nil)
 }
 
-func (s *Scenario) UpperBounds() []float64 {
+func (s *Scenario) UpperBounds() *mat64.Dense {
 	nperiods := s.nPeriods()
-	up := make([]float64, s.nVars())
+	up := mat64.NewDense(s.nVars(), 1, nil)
 	for f, fac := range s.Facs {
 		for n := 0; n < nperiods; n++ {
-			i := f*nperiods + n
-			up[i] = (s.MaxPower[n]/fac.Cap + 1) * 2
+			if fac.Cap != 0 {
+				up.Set(f*nperiods+n, 0, (s.MaxPower[n]/fac.Cap+1)*2)
+			} else {
+				up.Set(f*nperiods+n, 0, 1000)
+			}
 		}
 	}
 	return up
 }
 
-func (s *Scenario) PowerConstr() (A [][]float64, b []float64) {
+func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 	nperiods := s.nPeriods()
-	cs := make([][]float64, 0, nperiods)
+
+	A = mat64.NewDense(nperiods, s.nVars(), nil)
+	low = mat64.NewDense(nperiods, 1, s.MinPower)
+	up = mat64.NewDense(nperiods, 1, s.MaxPower)
+
 	for t := 0; t < s.SimDur; t += s.BuildPeriod {
-		c := make([]float64, s.nVars())
 		for f, fac := range s.Facs {
 			for n := 0; n < nperiods; n++ {
-				i := f*nperiods + n
-				if n*s.BuildPeriod+fac.Life < t {
-					c[i] = 0
-				} else {
-					c[i] = fac.Cap
+				if n*s.BuildPeriod+fac.Life >= t && n*s.BuildPeriod <= t {
+					i := f*nperiods + n
+					A.Set(t/s.BuildPeriod, i, fac.Cap)
 				}
 			}
 		}
-		cs = append(cs, c)
 	}
-	return cs
+
+	return low, A, up
 }
 
 func (s *Scenario) nVars() int {
@@ -82,5 +90,5 @@ func (s *Scenario) nVars() int {
 }
 
 func (s *Scenario) nPeriods() int {
-	return s.SimDur/s.BuildPeriod + 1
+	return (s.SimDur + 1) / s.BuildPeriod
 }
