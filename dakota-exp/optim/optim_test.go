@@ -36,17 +36,22 @@ func TestVarNames(t *testing.T) {
 	t.Logf("LowerBounds:\n%v", Mat{s.LowerBounds()})
 	t.Logf("UpperBounds:\n%v", Mat{s.UpperBounds()})
 
-	low, A, up := s.PowerConstr()
+	low, Ap, up := s.PowerConstr()
 	t.Log("Power Constraints:")
 	t.Logf("    LowerBounds:\n%v", Mat{low})
 	t.Logf("    UpperBounds:\n%v", Mat{up})
-	t.Logf("    A:\n%v", Mat{A})
+	t.Logf("    A:\n%v", Mat{Ap})
 
-	low, A, up = s.SupportConstr()
+	low, As, up := s.SupportConstr()
 	t.Log("Support Constraints:")
 	t.Logf("    LowerBounds:\n%v", Mat{low})
 	t.Logf("    UpperBounds:\n%v", Mat{up})
-	t.Logf("    A:\n%v", Mat{A})
+	t.Logf("    A:\n%v", Mat{As})
+
+	c := &mat64.Dense{}
+
+	c.Stack(Ap, As)
+	t.Logf("Stacked Constraints:\n%v", Mat{c})
 }
 
 type Mat struct {

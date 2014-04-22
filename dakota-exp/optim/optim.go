@@ -1,24 +1,25 @@
 package optim
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/gonum/matrix/mat64"
 )
 
 type Prototype string
 
-type Depend struct {
-	AtLeast   int
-	AtLeastP  Prototype
-	ForEvery  int
-	ForEveryP Prototype
-}
-
 type Facility struct {
 	Proto Prototype
 	Cap   float64
 	Life  int
+}
+
+type Param struct {
+	Time  int
+	Proto string
+	N     int
 }
 
 type Scenario struct {
@@ -27,10 +28,19 @@ type Scenario struct {
 	// facilities are deployed
 	BuildPeriod int
 	Facs        []Facility
-	Depends     []Depend
 	Builds      []int
 	MinPower    []float64
 	MaxPower    []float64
+	// Params holds a set of potential build schedule values for the scenario.
+	Params []Param
+}
+
+func (s *Scenario) Load(fname string) error {
+	data, err := ioutil.ReadFile(fname)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, s)
 }
 
 func (s *Scenario) VarNames() []string {
