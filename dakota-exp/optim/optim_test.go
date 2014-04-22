@@ -41,6 +41,12 @@ func TestVarNames(t *testing.T) {
 	t.Logf("    LowerBounds:\n%v", Mat{low})
 	t.Logf("    UpperBounds:\n%v", Mat{up})
 	t.Logf("    A:\n%v", Mat{A})
+
+	low, A, up = s.SupportConstr()
+	t.Log("Support Constraints:")
+	t.Logf("    LowerBounds:\n%v", Mat{low})
+	t.Logf("    UpperBounds:\n%v", Mat{up})
+	t.Logf("    A:\n%v", Mat{A})
 }
 
 type Mat struct {

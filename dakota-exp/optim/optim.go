@@ -64,6 +64,45 @@ func (s *Scenario) UpperBounds() *mat64.Dense {
 	return up
 }
 
+// SupportConstr builds and returns matrices representing linear inequality
+// constraints with a parameter multiplier matrix A and upper and lower
+// bounds. The constraint expresses that the total number of support
+// facilities (i.e. not reactors) at every timestep must never be more
+// than twice the number of deployed reactors.
+func (s *Scenario) SupportConstr() (low, A, up *mat64.Dense) {
+	nperiods := s.nPeriods()
+
+	A = mat64.NewDense(nperiods, s.nVars(), nil)
+	low = mat64.NewDense(nperiods, 1, nil)
+	up = mat64.NewDense(nperiods, 1, s.MaxPower)
+	up.Apply(func(r, c int, v float64) float64 { return 1e200 }, up)
+
+	for t := 0; t < s.SimDur; t += s.BuildPeriod {
+		for f, fac := range s.Facs {
+			for n := 0; n < nperiods; n++ {
+				alive := n*s.BuildPeriod+fac.Life >= t && n*s.BuildPeriod <= t
+				if !alive {
+					continue
+				}
+
+				i := f*nperiods + n
+				if fac.Cap == 0 {
+					A.Set(t/s.BuildPeriod, i, -1)
+				} else {
+					A.Set(t/s.BuildPeriod, i, 2)
+				}
+			}
+		}
+	}
+
+	return low, A, up
+}
+
+// PowerConstr builds and returns matrices representing linear inequality
+// constraints with a parameter multiplier matrix A and upper and lower
+// bounds. The constraint expresses that the total power capacity deployed at
+// every timestep must always be between the given MinPower and MaxPower
+// scenario bounds.
 func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 	nperiods := s.nPeriods()
 
