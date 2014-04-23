@@ -2,6 +2,7 @@
     "SimDur": 14,
 	"DakotaTmpl": "dakota.in",
 	"CyclusTmpl": "cyclus.xml",
+	"CyclusBin": "/home/r/cyc/bin/cyclus",
 	"BuildPeriod": 2,
 	"Facs": [
         {"Proto": "Source", "Cap": 0},

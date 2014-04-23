@@ -14,10 +14,8 @@ func init() {
 	mat64.Register(goblas.Blas{})
 }
 
-type Prototype string
-
 type Facility struct {
-	Proto Prototype
+	Proto string
 	Cap   float64
 	Life  int
 }
@@ -40,6 +38,7 @@ type Scenario struct {
 	File       string
 	DakotaTmpl string
 	CyclusTmpl string
+	CyclusBin  string
 	// BuildPeriod is the number of timesteps between timesteps in which
 	// facilities are deployed
 	BuildPeriod int
@@ -72,6 +71,17 @@ func (s *Scenario) Load(fname string) error {
 	return nil
 }
 
+func (s *Scenario) InitParams(vals []int) {
+	s.Params = make([]Param, len(vals))
+	for i, val := range vals {
+		f := i / s.nPeriods()
+		t := (i%s.nPeriods() + 1) * s.BuildPeriod
+		s.Params[i].Time = t
+		s.Params[i].Proto = s.Facs[f].Proto
+		s.Params[i].N = val
+	}
+}
+
 func (s *Scenario) VarNames() []string {
 	nperiods := s.nPeriods()
 	names := make([]string, s.Nvars())
@@ -93,10 +103,11 @@ func (s *Scenario) UpperBounds() *mat64.Dense {
 	up := mat64.NewDense(s.Nvars(), 1, nil)
 	for f, fac := range s.Facs {
 		for n := 0; n < nperiods; n++ {
+			v := (s.MaxPower[n]/fac.Cap + 1)
 			if fac.Cap != 0 {
-				up.Set(f*nperiods+n, 0, (s.MaxPower[n]/fac.Cap+1)*2)
+				up.Set(f*nperiods+n, 0, v*2)
 			} else {
-				up.Set(f*nperiods+n, 0, 1000)
+				up.Set(f*nperiods+n, 0, 100)
 			}
 		}
 	}
