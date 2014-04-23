@@ -14,7 +14,7 @@ import (
 	"strings"
 	"text/template"
 
-	_ "code.google.com/p/go-sqlite/go1/sqlite3"
+	_ "github.com/mxk/go-sqlite/sqlite3"
 )
 
 var scenfile = flag.String("scen", "scenario.json", "file containing problem scenification")
