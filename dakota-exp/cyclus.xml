@@ -2,35 +2,34 @@
 
 <simulation>
   <control>
-      <duration>{{.SimDur}}</duration>
+    <duration>{{.SimDur}}</duration>
     <startmonth>1</startmonth>
     <startyear>2000</startyear>
     <decay>0</decay>
     <simhandle>{{.Handle}}</simhandle>
   </control>
 
-  <commodity>
-    <name>cheese</name>
-  </commodity>
+  <commodity> <name>fresh_fuel</name> </commodity>
+  <commodity> <name>spent_fuel</name> </commodity>
 
   <prototype>
-    <name>CheeseFarm</name>
+    <name>source</name>
     <agent>
       <Source>
-        <commod_>cheese</commod_>
-        <recipe_name_>swiss</recipe_name_>
-        <capacity_>3</capacity_>
+        <commod_>fresh_fuel</commod_>
+        <recipe_name_>fresh</recipe_name_>
+        <capacity_>1</capacity_>
       </Source>
     </agent>
   </prototype>
 
   <prototype>
-    <name>Copps</name>
+    <name>sink</name>
     <agent>
       <Sink>
-        <capacity_>3</capacity_>
+        <capacity_>20</capacity_>
         <in_commods_>
-          <val>cheese</val>
+          <val>spent_fuel</val>
         </in_commods_>
       </Sink>
     </agent>
@@ -38,7 +37,7 @@
   </prototype>
 
   <prototype>
-    <name>ElonMusk</name>
+    <name>deployer</name>
     <agent>
       <DeployInst>
 
@@ -54,23 +53,61 @@
     </agent>
   </prototype>
 
+  <prototype>
+    <name>reactor</name>
+    <agent>
+      <BatchReactor>
+
+        <fuel>         
+          <incommodity>fresh_fuel</incommodity>
+          <inrecipe>fresh</inrecipe>
+          <outcommodity>spent_fuel</outcommodity>
+          <outrecipe>spent</outrecipe>
+        </fuel>
+
+        <processtime>1</processtime>
+        <nbatches>1</nbatches>
+        <batchsize>1</batchsize>
+        <refueltime>0</refueltime>
+
+        <commodity_production>
+          <commodity>lwr_power</commodity>
+          <capacity>.928</capacity>        <!--GWe-y-->
+          <cost>64</cost>        <!--$/kWe-y-->
+        </commodity_production>
+
+      </BatchReactor>
+    </agent>
+  </prototype>
 
   <agent>
-    <name>musk1</name>
-    <prototype>ElonMusk</prototype>
+    <name>deployer1</name>
+    <prototype>deployer</prototype>
   </agent>
 
   <recipe>
-    <name>swiss</name>
+    <name>fresh</name>
     <basis>mass</basis>
-    <nuclide>
-      <id>922350000</id>
-      <comp>0.711</comp>
-    </nuclide>
-    <nuclide>
-      <id>922380000</id>
-      <comp>99.289</comp>
-    </nuclide>
+    <nuclide> <id>922350000</id><comp>0.04</comp></nuclide>
+    <nuclide><id>922380000</id><comp>0.96</comp></nuclide>
   </recipe>
+
+  <recipe>
+    <name>spent</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id> <comp>156.729</comp> </nuclide>
+    <nuclide> <id>922360000</id> <comp>102.103</comp> </nuclide>
+    <nuclide> <id>922380000</id> <comp>18280.324</comp> </nuclide>
+    <nuclide> <id>932370000</id> <comp>13.656</comp> </nuclide>
+    <nuclide> <id>942380000</id> <comp>5.043</comp> </nuclide>
+    <nuclide> <id>942390000</id> <comp>106.343</comp> </nuclide>
+    <nuclide> <id>942400000</id> <comp>41.357</comp> </nuclide>
+    <nuclide> <id>942410000</id> <comp>36.477</comp> </nuclide>
+    <nuclide> <id>942420000</id> <comp>15.387</comp> </nuclide>
+    <nuclide> <id>952410000</id> <comp>1.234</comp> </nuclide>
+    <nuclide> <id>952430000</id> <comp>3.607</comp> </nuclide>
+    <nuclide> <id>962440000</id> <comp>0.431</comp> </nuclide>
+    <nuclide> <id>962450000</id> <comp>1.263</comp> </nuclide>
+  </recipe> 
 
 </simulation>

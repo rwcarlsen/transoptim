@@ -4,10 +4,11 @@
 	"CyclusTmpl": "cyclus.xml",
 	"CyclusBin": "/home/r/cyc/bin/cyclus",
 	"BuildPeriod": 2,
+    "Discount": 0.04,
 	"Facs": [
-        {"Proto": "Source", "Cap": 0},
-        {"Proto": "Reactor", "Cap": 1, "Life": 3},
-        {"Proto": "Sink", "Cap": 0}
+        {"Proto": "source", "Cap": 0, "Life": 0, "CapCost": 10, "OpCost": 1},
+        {"Proto": "reactor", "Cap": 1, "Life": 3, "CapCost": 10, "OpCost": 2},
+        {"Proto": "sink", "Cap": 0, "Life": 0, "CapCost": 10, "OpCost": 1}
     ],
 	"MinPower": [1, 1, 2, 3, 5, 8],
 	"MaxPower": [2, 2, 3, 4, 6, 9]

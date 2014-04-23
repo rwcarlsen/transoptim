@@ -1,10 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -51,70 +53,103 @@ func main() {
 
 	// Parse dakota params into scenario object
 	paramsFile := flag.Arg(0)
-	//resultFile := flag.Arg(1)
-
 	err = ParseParams(scen, paramsFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// generate cyclus input file
+	// generate cyclus input file and run cyclus and post process db
 	cycfile, err := GenCyclusInfile(scen)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// run cyclus
 	bin := scen.CyclusBin
 	cmd := exec.Command(bin, "--flat-schema", cycfile)
-
+	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
 
-	// calculate objective and write to results file
-	//h := scen["Handle"].(string)
-	//db, err := sql.Open("sqlite3", "cyclus.sqlite")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	cmd = exec.Command("inventory", "cyclus.sqlite")
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
 
-	//q := `
-	//	SELECT SUM(res.Quantity) FROM
-	//		Transactions AS tr
-	//		INNER JOIN Resources AS res
-	//		INNER JOIN Info
-	//	WHERE
-	//		res.SimId = tr.SimId AND Info.SimId = tr.SimId
-	//		AND tr.ResourceId = res.ResourceId
-	//		AND Info.Handle = ?
-	//	`
-	//row := db.QueryRow(q, h)
-	//transQty := sql.NullInt64{}
-	//if err := row.Scan(&transQty); err != nil {
-	//	log.Fatal(err)
-	//}
+	// calculate and write out objective val
+	resultFile := flag.Arg(1)
+	val, err := CalcObjective("cyclus.sqlite", scen.Handle, scen)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	//q = `
-	//	SELECT SUM(Info.Duration-ae.EnterTime) FROM
-	//		AgentEntry AS ae
-	//		INNER JOIN Info
-	//	WHERE
-	//		ae.SimId = Info.SimId
-	//		AND Info.Handle = ?
-	//	`
-	//row = db.QueryRow(q, h)
-	//runTime := sql.NullInt64{}
-	//if err := row.Scan(&runTime); err != nil {
-	//	log.Fatal(err)
-	//}
+	err = ioutil.WriteFile(resultFile, []byte(fmt.Sprint(val)), 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
 
-	//objective := float64(runTime.Int64) / float64(transQty.Int64)
+func CalcObjective(dbfile, handle string, scen *Scenario) (float64, error) {
+	db, err := sql.Open("sqlite3", dbfile)
+	if err != nil {
+		return 0, err
+	}
 
-	//err = ioutil.WriteFile(resultFile, []byte(fmt.Sprint(objective)), 0755)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	q1 := `
+		SELECT tl.Time FROM TimeList AS tl
+			INNER JOIN Agents As a ON a.EnterTime <= tl.Time AND (a.ExitTime >= tl.Time OR a.ExitTime IS NULL)
+			INNER JOIN Info
+		WHERE
+			a.SimId = tl.SimId AND a.SimId = Info.SimId AND Info.Handle = ?
+			AND a.Prototype = ?;
+		`
+	q2 := `
+		SELECT a.EnterTime FROM Agents AS a
+			INNER JOIN Info ON Info.SimId = a.SimId
+		WHERE
+			Info.Handle = ?
+			AND a.Prototype = ?
+		`
+
+	totcost := 0.0
+	for _, fac := range scen.Facs {
+		rows, err := db.Query(q1, handle, fac.Proto)
+		if err != nil {
+			return 0, err
+		}
+		for rows.Next() {
+			var t int
+			if err := rows.Scan(&t); err != nil {
+				return 0, err
+			}
+			totcost += PV(fac.OpCost, t, scen.Discount)
+		}
+		if err := rows.Err(); err != nil {
+			return 0, err
+		}
+
+		rows, err = db.Query(q2, handle, fac.Proto)
+		if err != nil {
+			return 0, err
+		}
+		for rows.Next() {
+			var t int
+			if err := rows.Scan(&t); err != nil {
+				return 0, err
+			}
+			totcost += PV(fac.CapitalCost, t, scen.Discount)
+		}
+		if err := rows.Err(); err != nil {
+			return 0, err
+		}
+	}
+
+	return totcost, nil
+}
+
+func PV(amt float64, nt int, rate float64) float64 {
+	return amt / math.Pow(1+rate, float64(nt))
 }
 
 func ParseParams(scen *Scenario, fname string) error {

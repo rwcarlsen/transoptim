@@ -15,9 +15,11 @@ func init() {
 }
 
 type Facility struct {
-	Proto string
-	Cap   float64
-	Life  int
+	Proto       string
+	Cap         float64
+	OpCost      float64
+	CapitalCost float64
+	Life        int
 }
 
 func (f *Facility) Alive(built, curr int) bool {
@@ -42,6 +44,7 @@ type Scenario struct {
 	// BuildPeriod is the number of timesteps between timesteps in which
 	// facilities are deployed
 	BuildPeriod int
+	Discount    float64
 	Facs        []Facility
 	MinPower    []float64
 	MaxPower    []float64
