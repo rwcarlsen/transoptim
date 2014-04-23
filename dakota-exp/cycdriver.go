@@ -22,6 +22,8 @@ var scenfile = flag.String("scen", "scenario.json", "file containing problem sce
 var dakotaGen = flag.Bool("init", false, "true to generate the dakota input file")
 var dakotaif = flag.String("o", "", "name of generated dakota input file")
 
+const tmpDir = "cyctmp"
+
 func main() {
 	flag.Parse()
 	log.SetFlags(log.Lshortfile)
@@ -60,15 +62,19 @@ func main() {
 	}
 
 	// generate cyclus input file and run cyclus and post process db
-	cycin := uuid.NewRandom().String() + ".cyclus.xml"
+	ui := uuid.NewRandom()
+	if err := os.MkdirAll(tmpDir, 0755); err != nil {
+		log.Fatal(err)
+	}
+	cycin := filepath.Join(tmpDir, ui.String()+".cyclus.xml")
+	cycout := filepath.Join(tmpDir, ui.String()+".sqlite")
+
 	err = GenCyclusInfile(scen, cycin)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	bin := scen.CyclusBin
-	cycout := uuid.NewRandom().String() + ".sqlite"
-	cmd := exec.Command(bin, "--flat-schema", cycin, "-o", cycout)
+	cmd := exec.Command(scen.CyclusBin, "--flat-schema", cycin, "-o", cycout)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
