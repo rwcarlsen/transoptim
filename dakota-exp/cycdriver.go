@@ -14,6 +14,7 @@ import (
 	"strings"
 	"text/template"
 
+	"code.google.com/p/go-uuid/uuid"
 	_ "github.com/mxk/go-sqlite/sqlite3"
 )
 
@@ -59,19 +60,21 @@ func main() {
 	}
 
 	// generate cyclus input file and run cyclus and post process db
-	cycfile, err := GenCyclusInfile(scen)
+	cycin := uuid.NewRandom().String() + ".cyclus.xml"
+	err = GenCyclusInfile(scen, cycin)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	bin := scen.CyclusBin
-	cmd := exec.Command(bin, "--flat-schema", cycfile)
+	cycout := uuid.NewRandom().String() + ".sqlite"
+	cmd := exec.Command(bin, "--flat-schema", cycin, "-o", cycout)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
 
-	cmd = exec.Command("inventory", "cyclus.sqlite")
+	cmd = exec.Command("inventory", cycout)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
@@ -79,7 +82,7 @@ func main() {
 
 	// calculate and write out objective val
 	resultFile := flag.Arg(1)
-	val, err := CalcObjective("cyclus.sqlite", scen.Handle, scen)
+	val, err := CalcObjective(cycout, scen.Handle, scen)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -192,18 +195,17 @@ func ParseParams(scen *Scenario, fname string) error {
 	return nil
 }
 
-func GenCyclusInfile(scen *Scenario) (cycfile string, err error) {
+func GenCyclusInfile(scen *Scenario, fname string) error {
 	tmpl := scen.CyclusTmpl
-	fname := tmpl + ".gen"
 	t := template.Must(template.ParseFiles(tmpl))
 	f, err := os.Create(fname)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer f.Close()
 
 	if err := t.Execute(f, scen); err != nil {
-		return "", err
+		return err
 	}
-	return fname, nil
+	return nil
 }

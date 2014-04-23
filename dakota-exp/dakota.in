@@ -33,6 +33,7 @@ variables
 interface
     fork
         analysis_driver = 'cycdriver -scen={{.File}}'
+    asynchronous
 
 responses
     objective_functions = 1
