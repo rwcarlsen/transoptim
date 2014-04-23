@@ -1,4 +1,4 @@
-package optim
+package main
 
 import (
 	"fmt"
@@ -18,15 +18,15 @@ func TestVarNames(t *testing.T) {
 		SimDur:      10,
 		BuildPeriod: 2,
 		Facs:        facs,
-		MinPower:    []float64{10, 20, 30, 50, 80},
-		MaxPower:    []float64{150, 150, 150, 150, 150},
+		MinPower:    []float64{10, 20, 30, 50},
+		MaxPower:    []float64{150, 150, 150, 150},
 	}
 
 	t.Logf("Scenario: %+v", s)
 	for _, fac := range s.Facs {
 		t.Logf("   %+v", fac)
 	}
-	t.Logf("nVars: %+v", s.nVars())
+	t.Logf("Nvars: %+v", s.Nvars())
 	t.Logf("nPeriods: %+v", s.nPeriods())
 
 	t.Log("VarNames:")
@@ -48,10 +48,11 @@ func TestVarNames(t *testing.T) {
 	t.Logf("    UpperBounds:\n%v", Mat{up})
 	t.Logf("    A:\n%v", Mat{As})
 
-	c := &mat64.Dense{}
-
-	c.Stack(Ap, As)
-	t.Logf("Stacked Constraints:\n%v", Mat{c})
+	l, A, u := s.AllConstr()
+	t.Log("All Constraints:")
+	t.Logf("    LowerBounds:\n%v", Mat{l})
+	t.Logf("    UpperBounds:\n%v", Mat{u})
+	t.Logf("    A:\n%v", Mat{A})
 }
 
 type Mat struct {

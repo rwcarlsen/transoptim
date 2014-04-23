@@ -42,18 +42,11 @@
     <agent>
       <DeployInst>
 
-        {{range .SourceFacs}}
-        <buildorder>
-          <prototype>CheeseFarm</prototype>
-          <number>1</number>
-          <date>{{.}}</date>
-        </buildorder>
-        {{end}}
         {{range .Params}}
         <buildorder>
-          <prototype>Copps</prototype>
-          <number>1</number>
-          <date>{{.}}</date>
+          <prototype>{{.Proto}}</prototype>
+          <number>{{.N}}</number>
+          <date>{{.Time}}</date>
         </buildorder>
         {{end}}
 

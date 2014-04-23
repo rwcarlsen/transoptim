@@ -1,0 +1,13 @@
+{
+    "SimDur": 14,
+	"DakotaTmpl": "dakota.in",
+	"CyclusTmpl": "cyclus.xml",
+	"BuildPeriod": 2,
+	"Facs": [
+        {"Proto": "Source", "Cap": 0},
+        {"Proto": "Reactor", "Cap": 1, "Life": 3},
+        {"Proto": "Sink", "Cap": 0}
+    ],
+	"MinPower": [1, 1, 2, 3, 5, 8],
+	"MaxPower": [2, 2, 3, 4, 6, 9]
+}

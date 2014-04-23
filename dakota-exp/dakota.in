@@ -1,3 +1,6 @@
+{{$l := .ConstrLow}}
+{{$a := .ConstrMat}}
+{{$u := .ConstrUp}}
 
 strategy
     graphics
@@ -5,25 +8,31 @@ strategy
         tabular_graphics_file = 'cycopt.dat'
     single_method
 
+    linear_inequality_constraint_matrix = {{range $row, $foo := $a.Col nil 0}}{{range $col, $bar := $a.Row nil 0}} {{$a.At $row $col}}{{end}}
+                                          {{end}}
+
+    linear_inequality_lower_bounds = {{range $val := $l.Col nil 0}} {{$val}}{{end}}
+    linear_inequality_upper_bounds = {{range $val := $u.Col nil 0}} {{$val}}{{end}}
+
 method
     max_iterations = 500
     convergence_tolerance = 1e-4
-    mesh_adaptive_search
+    soga
 
 model
     single
 
 {{$dot := .}}
 variables
-    discrete_design_range = {{len .InitialSinks}}
-        initial_point     {{range .InitialSinks}}{{.}} {{end}}
-        lower_bounds      {{range .InitialSinks}}1 {{end}}
-        upper_bounds      {{range .InitialSinks}}{{$dot.SimDur}} {{end}}
-        descriptors       {{range $i, $val := .InitialSinks}}'x{{$i}}' {{end}}
+    discrete_design_range = {{.Nvars}}
+        initial_point     {{range .Params}} {{.N}}{{end}}
+        lower_bounds      {{range .LowerBounds.Col nil 0}} {{.}}{{end}}
+        upper_bounds      {{range .UpperBounds.Col nil 0}} {{.}}{{end}}
+        descriptors       {{range .VarNames}} '{{.}}'{{end}}
 
 interface
     fork
-        analysis_driver = 'cycdriver -spec={{.Spec}}'
+        analysis_driver = 'cycdriver -scen={{.File}}'
 
 responses
     objective_functions = 1

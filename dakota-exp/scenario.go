@@ -1,12 +1,18 @@
-package optim
+package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 
+	"github.com/gonum/blas/goblas"
 	"github.com/gonum/matrix/mat64"
 )
+
+func init() {
+	mat64.Register(goblas.Blas{})
+}
 
 type Prototype string
 
@@ -16,6 +22,13 @@ type Facility struct {
 	Life  int
 }
 
+func (f *Facility) Alive(built, curr int) bool {
+	if built > curr {
+		return false
+	}
+	return built+f.Life >= curr || f.Life <= 0
+}
+
 type Param struct {
 	Time  int
 	Proto string
@@ -23,29 +36,45 @@ type Param struct {
 }
 
 type Scenario struct {
-	SimDur int
+	SimDur     int
+	File       string
+	DakotaTmpl string
+	CyclusTmpl string
 	// BuildPeriod is the number of timesteps between timesteps in which
 	// facilities are deployed
 	BuildPeriod int
 	Facs        []Facility
-	Builds      []int
 	MinPower    []float64
 	MaxPower    []float64
 	// Params holds a set of potential build schedule values for the scenario.
 	Params []Param
+	Handle string
 }
 
 func (s *Scenario) Load(fname string) error {
+	if s == nil {
+		s = &Scenario{}
+	}
 	data, err := ioutil.ReadFile(fname)
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(data, s)
+	if err := json.Unmarshal(data, s); err != nil {
+		if serr, ok := err.(*json.SyntaxError); ok {
+			line, col := findLine(data, serr.Offset)
+			return fmt.Errorf("%s:%d:%d: %v", fname, line, col, err)
+		}
+		return err
+	}
+
+	s.File = fname
+	s.Params = make([]Param, s.Nvars())
+	return nil
 }
 
 func (s *Scenario) VarNames() []string {
 	nperiods := s.nPeriods()
-	names := make([]string, s.nVars())
+	names := make([]string, s.Nvars())
 	for f := range s.Facs {
 		for n := 0; n < nperiods; n++ {
 			i := f*nperiods + n
@@ -56,12 +85,12 @@ func (s *Scenario) VarNames() []string {
 }
 
 func (s *Scenario) LowerBounds() *mat64.Dense {
-	return mat64.NewDense(s.nVars(), 1, nil)
+	return mat64.NewDense(s.Nvars(), 1, nil)
 }
 
 func (s *Scenario) UpperBounds() *mat64.Dense {
 	nperiods := s.nPeriods()
-	up := mat64.NewDense(s.nVars(), 1, nil)
+	up := mat64.NewDense(s.Nvars(), 1, nil)
 	for f, fac := range s.Facs {
 		for n := 0; n < nperiods; n++ {
 			if fac.Cap != 0 {
@@ -82,24 +111,25 @@ func (s *Scenario) UpperBounds() *mat64.Dense {
 func (s *Scenario) SupportConstr() (low, A, up *mat64.Dense) {
 	nperiods := s.nPeriods()
 
-	A = mat64.NewDense(nperiods, s.nVars(), nil)
+	A = mat64.NewDense(nperiods, s.Nvars(), nil)
 	low = mat64.NewDense(nperiods, 1, nil)
-	up = mat64.NewDense(nperiods, 1, s.MaxPower)
+	tmp := make([]float64, len(s.MaxPower))
+	copy(tmp, s.MaxPower)
+	up = mat64.NewDense(nperiods, 1, tmp)
 	up.Apply(func(r, c int, v float64) float64 { return 1e200 }, up)
 
-	for t := 0; t < s.SimDur; t += s.BuildPeriod {
+	for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
 		for f, fac := range s.Facs {
 			for n := 0; n < nperiods; n++ {
-				alive := n*s.BuildPeriod+fac.Life >= t && n*s.BuildPeriod <= t
-				if !alive {
+				if !fac.Alive(n*s.BuildPeriod, t) {
 					continue
 				}
 
 				i := f*nperiods + n
 				if fac.Cap == 0 {
-					A.Set(t/s.BuildPeriod, i, -1)
+					A.Set(t/s.BuildPeriod-1, i, -1)
 				} else {
-					A.Set(t/s.BuildPeriod, i, 2)
+					A.Set(t/s.BuildPeriod-1, i, 2)
 				}
 			}
 		}
@@ -116,16 +146,19 @@ func (s *Scenario) SupportConstr() (low, A, up *mat64.Dense) {
 func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 	nperiods := s.nPeriods()
 
-	A = mat64.NewDense(nperiods, s.nVars(), nil)
-	low = mat64.NewDense(nperiods, 1, s.MinPower)
-	up = mat64.NewDense(nperiods, 1, s.MaxPower)
+	A = mat64.NewDense(nperiods, s.Nvars(), nil)
+	tmp := make([]float64, len(s.MinPower))
+	copy(tmp, s.MinPower)
+	low = mat64.NewDense(nperiods, 1, tmp)
+	copy(tmp, s.MaxPower)
+	up = mat64.NewDense(nperiods, 1, tmp)
 
-	for t := 0; t < s.SimDur; t += s.BuildPeriod {
+	for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
 		for f, fac := range s.Facs {
 			for n := 0; n < nperiods; n++ {
-				if n*s.BuildPeriod+fac.Life >= t && n*s.BuildPeriod <= t {
+				if fac.Alive(n*s.BuildPeriod, t) {
 					i := f*nperiods + n
-					A.Set(t/s.BuildPeriod, i, fac.Cap)
+					A.Set(t/s.BuildPeriod-1, i, fac.Cap)
 				}
 			}
 		}
@@ -134,10 +167,55 @@ func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 	return low, A, up
 }
 
-func (s *Scenario) nVars() int {
+func (s *Scenario) AllConstr() (low, A, up *mat64.Dense) {
+	low, A, up = &mat64.Dense{}, &mat64.Dense{}, &mat64.Dense{}
+	l1, a1, u1 := s.SupportConstr()
+	l2, a2, u2 := s.PowerConstr()
+
+	low.Stack(l1, l2)
+	A.Stack(a1, a2)
+	up.Stack(u1, u2)
+
+	return low, A, up
+}
+
+func (s *Scenario) ConstrMat() (A *mat64.Dense) {
+	_, A, _ = s.AllConstr()
+	return A
+}
+
+func (s *Scenario) ConstrLow() (low *mat64.Dense) {
+	low, _, _ = s.AllConstr()
+	return low
+}
+
+func (s *Scenario) ConstrUp() (up *mat64.Dense) {
+	_, _, up = s.AllConstr()
+	return up
+}
+
+func (s *Scenario) Nvars() int {
 	return s.nPeriods() * len(s.Facs)
 }
 
 func (s *Scenario) nPeriods() int {
-	return (s.SimDur + 1) / s.BuildPeriod
+	return (s.SimDur+1)/s.BuildPeriod - 1
+}
+
+func findLine(data []byte, pos int64) (line, col int) {
+	line = 1
+	buf := bytes.NewBuffer(data)
+	for n := int64(0); n < pos; n++ {
+		b, err := buf.ReadByte()
+		if err != nil {
+			panic(err) //I don't really see how this could happen
+		}
+		if b == '\n' {
+			line++
+			col = 1
+		} else {
+			col++
+		}
+	}
+	return
 }

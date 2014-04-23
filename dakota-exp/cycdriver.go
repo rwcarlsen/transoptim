@@ -1,75 +1,68 @@
 package main
 
 import (
-	"database/sql"
-	"encoding/json"
 	"flag"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-	"os/exec"
-	"strconv"
-	"strings"
+	"path/filepath"
 	"text/template"
 
 	_ "code.google.com/p/go-sqlite/go1/sqlite3"
 )
 
-var specfile = flag.String("spec", "prob-spec.json", "file containing problem specification")
+var scenfile = flag.String("scen", "scenario.json", "file containing problem scenification")
 var dakotaGen = flag.Bool("init", false, "true to generate the dakota input file")
-
-type Spec map[string]interface{}
+var dakotaif = flag.String("o", "", "name of generated dakota input file")
 
 func main() {
 	flag.Parse()
 	log.SetFlags(log.Lshortfile)
 
-	paramsFile := flag.Arg(0)
-	resultFile := flag.Arg(1)
-
-	// load problem spec file
-	spec := Spec{}
-	spec["Spec"] = *specfile
-	data, err := ioutil.ReadFile(*specfile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = json.Unmarshal(data, &spec)
+	// load problem scen file
+	scen := &Scenario{}
+	err := scen.Load(*scenfile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if *dakotaGen {
-		tfile := spec["DakotaTmpl"].(string)
-		fname := spec["DakotaInfile"].(string)
-		t := template.Must(template.ParseFiles(tfile))
-		f, err := os.Create(fname)
+		if *dakotaif == "" {
+			*dakotaif = filepath.Base(scen.DakotaTmpl) + ".gen"
+		}
+
+		t := template.Must(template.ParseFiles(scen.DakotaTmpl))
+		f, err := os.Create(*dakotaif)
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer f.Close()
 
-		if err := t.Execute(f, spec); err != nil {
+		if err := t.Execute(f, scen); err != nil {
 			log.Fatal(err)
 		}
 		return
 	}
 
-	// build cyclus input file from dakota params and problem spec
-	err = ParseParams(spec, paramsFile)
+	//paramsFile := flag.Arg(0)
+	//resultFile := flag.Arg(1)
+
+}
+
+/*
+	// build cyclus input file from dakota params and problem scen
+	err = ParseParams(scen, paramsFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = GenCyclusInfile(spec)
+	err = GenCyclusInfile(scen)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// run cyclus
-	fname := spec["CyclusInfile"].(string)
-	bin := spec["CyclusBin"].(string)
+	fname := scen["CyclusInfile"].(string)
+	bin := scen["CyclusBin"].(string)
 	cmd := exec.Command(bin, "--flat-schema", fname)
 
 	if err := cmd.Run(); err != nil {
@@ -77,7 +70,7 @@ func main() {
 	}
 
 	// calculate objective and write to results file
-	h := spec["Handle"].(string)
+	h := scen["Handle"].(string)
 	db, err := sql.Open("sqlite3", "cyclus.sqlite")
 	if err != nil {
 		log.Fatal(err)
@@ -121,7 +114,7 @@ func main() {
 	}
 }
 
-func ParseParams(spec Spec, fname string) error {
+func ParseParams(scen Spec, fname string) error {
 	data, err := ioutil.ReadFile(fname)
 	if err != nil {
 		return err
@@ -156,8 +149,8 @@ func ParseParams(spec Spec, fname string) error {
 			h = fields[0]
 		}
 	}
-	spec["Params"] = vals
-	spec["Handle"] = h
+	scen["Params"] = vals
+	scen["Handle"] = h
 	return nil
 }
 
@@ -167,9 +160,9 @@ type Filler struct {
 	SinkFacs   []int
 }
 
-func GenCyclusInfile(spec Spec) error {
-	cyclusTmpl := spec["CyclusTmpl"].(string)
-	cyclusInfile := spec["CyclusInfile"].(string)
+func GenCyclusInfile(scen Spec) error {
+	cyclusTmpl := scen["CyclusTmpl"].(string)
+	cyclusInfile := scen["CyclusInfile"].(string)
 	t := template.Must(template.ParseFiles(cyclusTmpl))
 	f, err := os.Create(cyclusInfile)
 	if err != nil {
@@ -177,8 +170,9 @@ func GenCyclusInfile(spec Spec) error {
 	}
 	defer f.Close()
 
-	if err := t.Execute(f, spec); err != nil {
+	if err := t.Execute(f, scen); err != nil {
 		return err
 	}
 	return nil
 }
+*/
