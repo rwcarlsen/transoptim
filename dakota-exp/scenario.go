@@ -135,7 +135,7 @@ func (s *Scenario) SupportConstr() (low, A, up *mat64.Dense) {
 	for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
 		for f, fac := range s.Facs {
 			for n := 0; n < nperiods; n++ {
-				if !fac.Alive(n*s.BuildPeriod, t) {
+				if !fac.Alive(n*s.BuildPeriod+1, t) {
 					continue
 				}
 
@@ -170,7 +170,7 @@ func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 	for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
 		for f, fac := range s.Facs {
 			for n := 0; n < nperiods; n++ {
-				if fac.Alive(n*s.BuildPeriod, t) {
+				if fac.Alive(n*s.BuildPeriod+1, t) {
 					i := f*nperiods + n
 					A.Set(t/s.BuildPeriod-1, i, fac.Cap)
 				}
