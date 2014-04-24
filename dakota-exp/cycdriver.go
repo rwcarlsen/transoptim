@@ -15,12 +15,15 @@ import (
 	"text/template"
 
 	"code.google.com/p/go-uuid/uuid"
-	_ "github.com/mxk/go-sqlite/sqlite3"
+	"github.com/mxk/go-sqlite/sqlite3"
+	"github.com/rwcarlsen/cyan/post"
+	"github.com/rwcarlsen/cyan/query"
 )
 
 var scenfile = flag.String("scen", "scenario.json", "file containing problem scenification")
 var dakotaGen = flag.Bool("init", false, "true to generate the dakota input file")
 var dakotaif = flag.String("o", "", "name of generated dakota input file")
+var metric = flag.String("metric", "", "path to cyclus db to calc objective for")
 
 const tmpDir = "cyctmp"
 
@@ -31,9 +34,7 @@ func main() {
 	// load problem scen file
 	scen := &Scenario{}
 	err := scen.Load(*scenfile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fatalif(err)
 
 	// build dakota input file from template and return
 	if *dakotaGen {
@@ -43,63 +44,85 @@ func main() {
 
 		t := template.Must(template.ParseFiles(scen.DakotaTmpl))
 		f, err := os.Create(*dakotaif)
-		if err != nil {
-			log.Fatal(err)
-		}
+		fatalif(err)
 		defer f.Close()
 
-		if err := t.Execute(f, scen); err != nil {
-			log.Fatal(err)
+		err = t.Execute(f, scen)
+		fatalif(err)
+		return
+	}
+
+	if *metric != "" {
+		// post process cyclus output db
+		conn, err := sqlite3.Open(*metric)
+		fatalif(err)
+		defer conn.Close()
+
+		fatalif(post.Prepare(conn))
+		defer post.Finish(conn)
+
+		simids, err := post.GetSimIds(conn)
+		fatalif(err)
+
+		ctx := post.NewContext(conn, simids[0], nil)
+		if err := ctx.WalkAll(); err != nil {
+			fmt.Println(err)
 		}
+
+		// calculate and write out objective val
+		val, err := CalcObjective(*metric, simids[0], scen)
+		fatalif(err)
+
+		fmt.Println(val)
 		return
 	}
 
 	// Parse dakota params into scenario object
 	paramsFile := flag.Arg(0)
 	err = ParseParams(scen, paramsFile)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fatalif(err)
 
-	// generate cyclus input file and run cyclus and post process db
+	// generate cyclus input file and run cyclus
 	ui := uuid.NewRandom()
-	if err := os.MkdirAll(tmpDir, 0755); err != nil {
-		log.Fatal(err)
-	}
+	err = os.MkdirAll(tmpDir, 0755)
+	fatalif(err)
+
 	cycin := filepath.Join(tmpDir, ui.String()+".cyclus.xml")
 	cycout := filepath.Join(tmpDir, ui.String()+".sqlite")
 
 	err = GenCyclusInfile(scen, cycin)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fatalif(err)
 
 	cmd := exec.Command(scen.CyclusBin, "--flat-schema", cycin, "-o", cycout)
 	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
-	}
+	err = cmd.Run()
+	fatalif(err)
 
-	cmd = exec.Command("inventory", cycout)
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
-	}
+	// post process cyclus output db
+	conn, err := sqlite3.Open(cycout)
+	fatalif(err)
+	defer conn.Close()
+
+	fatalif(post.Prepare(conn))
+	defer post.Finish(conn)
+
+	simids, err := post.GetSimIds(conn)
+	fatalif(err)
+
+	ctx := post.NewContext(conn, simids[0], nil)
+	err = ctx.WalkAll()
+	fatalif(err)
 
 	// calculate and write out objective val
 	resultFile := flag.Arg(1)
-	val, err := CalcObjective(cycout, scen.Handle, scen)
-	if err != nil {
-		log.Fatal(err)
-	}
+	val, err := CalcObjective(cycout, simids[0], scen)
+	fatalif(err)
 
 	err = ioutil.WriteFile(resultFile, []byte(fmt.Sprint(val)), 0755)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fatalif(err)
 }
 
-func CalcObjective(dbfile, handle string, scen *Scenario) (float64, error) {
+func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error) {
 	db, err := sql.Open("sqlite3", dbfile)
 	if err != nil {
 		return 0, err
@@ -108,22 +131,15 @@ func CalcObjective(dbfile, handle string, scen *Scenario) (float64, error) {
 	q1 := `
 		SELECT tl.Time FROM TimeList AS tl
 			INNER JOIN Agents As a ON a.EnterTime <= tl.Time AND (a.ExitTime >= tl.Time OR a.ExitTime IS NULL)
-			INNER JOIN Info
 		WHERE
-			a.SimId = tl.SimId AND a.SimId = Info.SimId AND Info.Handle = ?
+			a.SimId = tl.SimId AND a.SimId = ?
 			AND a.Prototype = ?;
 		`
-	q2 := `
-		SELECT a.EnterTime FROM Agents AS a
-			INNER JOIN Info ON Info.SimId = a.SimId
-		WHERE
-			Info.Handle = ?
-			AND a.Prototype = ?
-		`
+	q2 := `SELECT EnterTime FROM Agents WHERE SimId = ? AND Prototype = ?`
 
 	totcost := 0.0
 	for _, fac := range scen.Facs {
-		rows, err := db.Query(q1, handle, fac.Proto)
+		rows, err := db.Query(q1, simid, fac.Proto)
 		if err != nil {
 			return 0, err
 		}
@@ -138,7 +154,7 @@ func CalcObjective(dbfile, handle string, scen *Scenario) (float64, error) {
 			return 0, err
 		}
 
-		rows, err = db.Query(q2, handle, fac.Proto)
+		rows, err = db.Query(q2, simid, fac.Proto)
 		if err != nil {
 			return 0, err
 		}
@@ -154,7 +170,13 @@ func CalcObjective(dbfile, handle string, scen *Scenario) (float64, error) {
 		}
 	}
 
-	return totcost, nil
+	// normalize to energy produced
+	joules, err := query.EnergyProduced(db, simid, 0, scen.SimDur)
+	if err != nil {
+		return 0, err
+	}
+
+	return totcost / (joules + 1), nil
 }
 
 func PV(amt float64, nt int, rate float64) float64 {
@@ -214,4 +236,10 @@ func GenCyclusInfile(scen *Scenario, fname string) error {
 		return err
 	}
 	return nil
+}
+
+func fatalif(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }

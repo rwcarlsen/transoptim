@@ -18,6 +18,7 @@ method
     max_iterations = 500
     convergence_tolerance = 1e-4
     soga
+        population_size 20
 
 model
     single
