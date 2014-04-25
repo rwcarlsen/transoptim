@@ -14,19 +14,32 @@ func init() {
 	mat64.Register(goblas.Blas{})
 }
 
+// Facility represents a cyclus agent prototype that could be built by the
+// optimizer.
 type Facility struct {
-	Proto       string
-	Cap         float64
-	OpCost      float64
+	Proto string
+	// Cap is the total Power output capacity of the facility.
+	Cap float64
+	// OpCost represents the per timstep operating cost for the facility
+	OpCost float64
+	// CapitalCost represents the overnight cost for building the facility
 	CapitalCost float64
-	Life        int
+	// WasteCost represents a per timstep cost for the facility to store its
+	// own waste.
+	WasteCost float64
+	// The lifetime of the facility (in timesteps). The lifetime must also
+	// be specified manually (consistent with this value) in the prototype
+	// definition in the cyclus input template file.
+	Life int
 }
 
-func (f *Facility) Alive(built, curr int) bool {
-	if built > curr {
+// Alive returns whether or not a facility built at the specified time is
+// still operating/active at t.
+func (f *Facility) Alive(built, t int) bool {
+	if built > t {
 		return false
 	}
-	return built+f.Life >= curr || f.Life <= 0
+	return built+f.Life >= t || f.Life <= 0
 }
 
 type Param struct {
@@ -36,20 +49,33 @@ type Param struct {
 }
 
 type Scenario struct {
-	SimDur     int
+	// SimDur is the simulation duration in timesteps (months)
+	SimDur int
+	// File is the name of the scenario file. This does not need to be filled
+	// out by the user.
 	File       string
 	DakotaTmpl string
 	CyclusTmpl string
-	CyclusBin  string
+	// CyclusBin is the full path to the cyclus binary
+	CyclusBin string
 	// BuildPeriod is the number of timesteps between timesteps in which
 	// facilities are deployed
 	BuildPeriod int
-	Discount    float64
-	Facs        []Facility
-	MinPower    []float64
-	MaxPower    []float64
+	// Discount represents the nominal annual discount rate (including
+	// inflation) for the simulation.
+	Discount float64
+	Facs     []Facility
+	// MinPower is a series of min deployed power capacity requirements that
+	// must be maintained for each build period.
+	MinPower []float64
+	// MaxPower is a series of max deployed power capacity requirements that
+	// must be maintained for each build period.
+	MaxPower []float64
 	// Params holds a set of potential build schedule values for the scenario.
+	// This is for internal use and does not need to be specified by the user.
 	Params []Param
+	// Handle is used internally and does not need to be specified by the
+	// user.
 	Handle string
 }
 

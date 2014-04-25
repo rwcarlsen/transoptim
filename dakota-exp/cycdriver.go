@@ -128,6 +128,7 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 		return 0, err
 	}
 
+	// add up overnight and operating costs converted to PV(t=0)
 	q1 := `
 		SELECT tl.Time FROM TimeList AS tl
 			INNER JOIN Agents As a ON a.EnterTime <= tl.Time AND (a.ExitTime >= tl.Time OR a.ExitTime IS NULL)
@@ -139,6 +140,7 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 
 	totcost := 0.0
 	for _, fac := range scen.Facs {
+		// calc total operating cost
 		rows, err := db.Query(q1, simid, fac.Proto)
 		if err != nil {
 			return 0, err
@@ -154,6 +156,7 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 			return 0, err
 		}
 
+		// calc overnight capital cost
 		rows, err = db.Query(q2, simid, fac.Proto)
 		if err != nil {
 			return 0, err
@@ -168,6 +171,20 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 		if err := rows.Err(); err != nil {
 			return 0, err
 		}
+
+		// add in waste penalty
+		ags, err := query.AllAgents(db, simid, fac.Proto)
+		ids := make([]int, len(ags))
+		for i, a := range ags {
+			ids[i] = a.Id
+		}
+		for t := 0; t < scen.SimDur; t++ {
+			mass, err := query.InvMassAt(db, simid, t, ids...)
+			if err != nil {
+				return 0, err
+			}
+			totcost += PV(mass*fac.WasteCost, t, scen.Discount)
+		}
 	}
 
 	// normalize to energy produced
@@ -175,7 +192,6 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 	if err != nil {
 		return 0, err
 	}
-
 	return totcost / (joules + 1), nil
 }
 

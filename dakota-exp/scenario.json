@@ -7,7 +7,7 @@
     "Discount": 0.04,
 	"Facs": [
         {"Proto": "source", "Cap": 0, "Life": 0, "CapCost": 10, "OpCost": 1},
-        {"Proto": "reactor", "Cap": 1, "Life": 0, "CapCost": 10, "OpCost": 2},
+        {"Proto": "reactor", "Cap": 1, "Life": 0, "CapCost": 10, "OpCost": 2, "WasteCost": 10},
         {"Proto": "sink", "Cap": 0, "Life": 0, "CapCost": 10, "OpCost": 1}
     ],
 	"MinPower": [1, 2, 5],
