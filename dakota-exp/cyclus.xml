@@ -42,12 +42,7 @@
       <DeployInst>
 
         {{range .Params}}
-        <buildorder>
-          <prototype>{{.Proto}}</prototype>
-          <number>{{.N}}</number>
-          <date>{{.Time}}</date>
-        </buildorder>
-        {{end}}
+        <buildorder> <prototype>{{.Proto}}</prototype> <number>{{.N}}</number> <date>{{.Time}}</date> </buildorder> {{end}}
 
       </DeployInst>
     </agent>

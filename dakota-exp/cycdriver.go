@@ -196,7 +196,8 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 }
 
 func PV(amt float64, nt int, rate float64) float64 {
-	return amt / math.Pow(1+rate, float64(nt))
+	monrate := rate / 12
+	return amt / math.Pow(1+monrate, float64(nt))
 }
 
 func ParseParams(scen *Scenario, fname string) error {
