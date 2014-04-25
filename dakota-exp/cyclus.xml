@@ -27,25 +27,13 @@
     <name>sink</name>
     <agent>
       <Sink>
-        <capacity_>20</capacity_>
+        <capacity_>1</capacity_>
         <in_commods_>
           <val>spent_fuel</val>
         </in_commods_>
       </Sink>
     </agent>
     <incommodity>waste</incommodity>
-  </prototype>
-
-  <prototype>
-    <name>deployer</name>
-    <agent>
-      <DeployInst>
-
-        {{range .Params}}
-        <buildorder> <prototype>{{.Proto}}</prototype> <number>{{.N}}</number> <date>{{.Time}}</date> </buildorder> {{end}}
-
-      </DeployInst>
-    </agent>
   </prototype>
 
   <prototype>
@@ -72,6 +60,18 @@
         </commodity_production>
 
       </BatchReactor>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>deployer</name>
+    <agent>
+      <DeployInst>
+
+        {{range .Params}}
+        <buildorder> <prototype>{{.Proto}}</prototype> <number>{{.N}}</number> <date>{{.Time}}</date> </buildorder> {{end}}
+
+      </DeployInst>
     </agent>
   </prototype>
 

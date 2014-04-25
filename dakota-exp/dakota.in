@@ -18,9 +18,9 @@ method
     max_iterations = 500
     convergence_tolerance = 1e-4
     soga
-        population_size 25
+        population_size 30
         fitness_type merit_function
-            constraint_penalty 10
+            constraint_penalty 100
 
 model
     single
