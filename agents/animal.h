@@ -22,6 +22,8 @@ class Animal : public cyclus::Facility {
   virtual void Tock(int time);
 
  private:
+  static std::map<std::string, int> alive_;
+
   /// food eaten per timestep to live
   #pragma cyclus var {'default': 1}
   double bufsize_;
@@ -49,7 +51,6 @@ class Animal : public cyclus::Facility {
   std::string outcommod_;
   #pragma cyclus var {'capacity': 'bufsize_'}
   cyclus::ResourceBuff outbuf_;
-
 
   SellPolicy outpolicy_;
   BuyPolicy inpolicy_;
