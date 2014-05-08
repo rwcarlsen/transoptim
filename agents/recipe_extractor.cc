@@ -18,8 +18,8 @@ RecipeExtractor::RecipeExtractor(cyclus::Context* ctx)
       outpolicy_(this),
       wastepolicy_(this) {}
 
-void RecipeExtractor::DoRegistration() {
-  cyclus::Facility::DoRegistration();
+void RecipeExtractor::EnterNotify() {
+  cyclus::Facility::EnterNotify();
 
   outpolicy_.Init(&outbuf_, outcommod_);
   wastepolicy_.Init(&wastebuf_, wastecommod_);

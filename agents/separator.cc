@@ -21,8 +21,8 @@ Separator::Separator(cyclus::Context* ctx)
       outpolicy_(this),
       wastepolicy_(this) {}
 
-void Separator::DoRegistration() {
-  cyclus::Facility::DoRegistration();
+void Separator::EnterNotify() {
+  cyclus::Facility::EnterNotify();
 
   outpolicy_.Init(&outbuf_, outcommod_);
   wastepolicy_.Init(&wastebuf_, wastecommod_);

@@ -17,8 +17,8 @@ RecipeMixer::RecipeMixer(cyclus::Context* ctx)
     inpolicy2_(this),
     outpolicy_(this) {}
 
-void RecipeMixer::DoRegistration() {
-  cyclus::Facility::DoRegistration();
+void RecipeMixer::EnterNotify() {
+  cyclus::Facility::EnterNotify();
 
   outpolicy_.Init(&outbuf_, outcommod_);
   inpolicy1_.Init(&inbuf1_, incommod1_, context()->GetRecipe(inrecipe1_));

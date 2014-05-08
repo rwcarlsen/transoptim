@@ -15,7 +15,7 @@ class RecipeExtractor : public cyclus::Facility {
   virtual ~RecipeExtractor() {};
   virtual std::string str() {return "";};
 
-  virtual void DoRegistration();
+  virtual void EnterNotify();
   virtual void Decommission();
 
   #pragma cyclus

@@ -15,7 +15,7 @@ class RecipeMixer : public cyclus::Facility {
   virtual ~RecipeMixer() {};
   virtual std::string str() {return "";};
 
-  virtual void DoRegistration();
+  virtual void EnterNotify();
   virtual void Decommission();
 
   #pragma cyclus

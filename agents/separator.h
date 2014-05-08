@@ -15,7 +15,7 @@ class Separator : public cyclus::Facility {
   virtual ~Separator() {};
   virtual std::string str() {return "";};
 
-  virtual void DoRegistration();
+  virtual void EnterNotify();
   virtual void Decommission();
 
   #pragma cyclus

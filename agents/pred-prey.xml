@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<simulation>
+  <control>
+    <duration>100</duration>
+    <startmonth>1</startmonth>
+    <startyear>2000</startyear>
+    <decay>0</decay>
+  </control>
+
+  <commodity><name>greens</name></commodity>
+  <commodity><name>rabbits</name></commodity>
+  <commodity><name>wolves</name></commodity>
+  <commodity><name>deadwolf</name></commodity>
+
+  <prototype>
+    <name>Forest</name>
+    <agent>
+      <Source>
+        <commod_>greens</commod_>
+        <recipe_name_>food</recipe_name_>
+        <capacity_>1000000</capacity_>
+      </Source>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Rabbit</name>
+    <agent>
+      <Animal>
+          <inrecipe_>food</inrecipe_>
+          <incommod_>greens</incommod_>
+          <outcommod_>rabbits</outcommod_>
+
+          <bufsize_>1</bufsize_>
+          <lifespan_>4</lifespan_>
+          <birth_freq_>1</birth_freq_>
+          <capture_ratio_>1.5</capture_ratio_>
+      </Animal>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Wolf</name>
+    <agent>
+      <Animal>
+          <inrecipe_>food</inrecipe_>
+          <incommod_>rabbits</incommod_>
+          <outcommod_>deadwolf</outcommod_>
+
+          <bufsize_>1.0</bufsize_>
+          <lifespan_>4</lifespan_>
+          <birth_freq_>1</birth_freq_>
+      </Animal>
+    </agent>
+  </prototype>
+
+  <prototype>
+    <name>Deployer</name>
+    <agent>
+      <DeployInst>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>1</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>2</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>3</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>4</date> </buildorder>
+
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>2</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>3</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>4</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>5</date> </buildorder>
+      </DeployInst>
+    </agent>
+  </prototype>
+
+  <agent> <name>deploy1</name> <prototype>Deployer</prototype> </agent>
+  <agent> <name>forest1</name> <prototype>Forest</prototype> </agent>
+
+  <recipe>
+    <name>food</name>
+    <basis>mass</basis>
+    <nuclide> <id>10010000</id><comp>.1</comp></nuclide>
+    <nuclide><id>80160000</id><comp>.7</comp></nuclide>
+    <nuclide><id>60120000</id><comp>.1</comp></nuclide>
+  </recipe>
+
+</simulation>
