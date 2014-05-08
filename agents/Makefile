@@ -6,10 +6,10 @@ CXXFLAGS += -g
 ##### dependency config #####
 includes += -I$(cyclus_root)/include/cyclus
 includes += -I$(HOME)/.local/include
-includes += $(shell pkg-config --cflags sqlite3)
-includes += $(shell pkg-config --cflags cbc)
-includes += $(shell pkg-config --cflags libxml-2.0)
-includes += $(shell pkg-config --cflags libxml++-2.6)
+includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags sqlite3)
+includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags cbc)
+includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags libxml-2.0)
+includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags libxml++-2.6)
 
 libs += -L$(cyclus_root)/lib
 libs += -L$(HOME)/.local/lib
