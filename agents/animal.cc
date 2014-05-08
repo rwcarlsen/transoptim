@@ -19,8 +19,8 @@ Animal::Animal(cyclus::Context* ctx)
     inpolicy_(this),
     outpolicy_(this) { }
 
-void Animal::DoRegistration() {
-  cyclus::Facility::DoRegistration();
+void Animal::EnterNotify() {
+  cyclus::Facility::EnterNotify();
   outpolicy_.Init(&outbuf_, outcommod_);
   inpolicy_.Init(&inbuf_, incommod_, context()->GetRecipe(inrecipe_), 0);
   context()->RegisterTrader(&outpolicy_);

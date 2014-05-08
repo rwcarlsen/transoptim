@@ -12,7 +12,7 @@ class Animal : public cyclus::Facility {
   virtual ~Animal() {};
   virtual std::string str() {return "";};
 
-  virtual void DoRegistration();
+  virtual void EnterNotify();
   virtual void Build(cyclus::Agent* parent = NULL);
   virtual void Decommission();
 
