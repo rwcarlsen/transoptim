@@ -1,5 +1,5 @@
 
-cyclus_root = /home/r/cyc/install
+cyclus_root = /home/robert/cyc/install
 modules = recipe_extractor recipe_mixer separator animal
 CXXFLAGS += -g
 
@@ -22,11 +22,24 @@ objs_tmp = $(source_unique:%.cc=%.o)
 module_tmp = $(modules:%=%.o)
 objs = $(filter-out $(module_tmp) %.gen.o,$(objs_tmp))
 
-$(info objs: $(objs))
-
 ##### primary targets #####
 all: $(libnames)
 	ls | grep 'lib[a-z].\+\.so' | xargs rm -f
+
+release : CXX_FLAGS = -O3
+release : all
+
+runsim : pred-prey.xml
+	rm -f cyclus.sqlite
+	cyclus -v3 pred-prey.xml --flat-schema
+
+rabbit : cyclus.sqlite
+	cycpost cyclus.sqlite
+	metric -db cyclus.sqlite deployseries Rabbit
+
+wolf : cyclus.sqlite
+	cycpost cyclus.sqlite
+	metric -db cyclus.sqlite deployseries Wolf
 
 clean:
 	rm -f *.o *.d
@@ -34,6 +47,7 @@ clean:
 	rm -f *.gen.c*
 	rm -f *.gen.h*
 	rm -f *.foo
+	rm -f cyclus.sqlite
 
 ##### pattern rules to build all object files from source #####
 

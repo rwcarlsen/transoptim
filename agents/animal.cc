@@ -13,7 +13,7 @@ Animal::Animal(cyclus::Context* ctx)
     bufsize_(0),
     birth_freq_(0),
     lifespan_(0),
-    capture_prob_(0),
+    capture_ratio_(0),
     for_sale_(0),
     inpolicy_(this),
     outpolicy_(this) { }
@@ -28,16 +28,15 @@ void Animal::DoRegistration() {
 
 void Animal::Build(cyclus::Agent* parent) {
   cyclus::Facility::Build();
-  Material::Ptr m;
-  m = Material::Create(this, bufsize_, context()->GetRecipe(inrecipe_));
-  inbuf_.Push(m);
   alive_[prototype()] += 1;
+  alive_[incommod_] += 1;
 }
 
 void Animal::Decommission() {
   context()->UnregisterTrader(&outpolicy_);
   context()->UnregisterTrader(&inpolicy_);
   alive_[prototype()] -= 1;
+  alive_[incommod_] -= 1;
   cyclus::Facility::Decommission();
 }
 
@@ -48,10 +47,11 @@ void Animal::Tock(int t) {
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
   int age = context()->time() - enter_time();
-  if (inbuf_.space() > cyclus::eps()) {
+  if (inbuf_.quantity() < cyclus::eps()) {
     LG(INFO3) << LABEL << "is dying of starvation";
     context()->NewDatum("AnimalEvents")
       ->AddVal("AgentId", id())
+      ->AddVal("Time", context()->time())
       ->AddVal("Stat", "starved")
       ->Record();
     context()->SchedDecom(this);
@@ -59,7 +59,8 @@ void Animal::Tock(int t) {
   } else if (age >= lifespan_) {
     context()->NewDatum("AnimalEvents")
       ->AddVal("AgentId", id())
-      ->AddVal("Stat", "died")
+      ->AddVal("Time", context()->time())
+      ->AddVal("Stat", "died naturally")
       ->Record();
     LG(INFO3) << LABEL << "is dying of old age";
     context()->SchedDecom(this);
@@ -67,6 +68,7 @@ void Animal::Tock(int t) {
   } else if (outbuf_.quantity() < cyclus::eps() && age > 0 && for_sale_ != 0) {
     context()->NewDatum("AnimalEvents")
       ->AddVal("AgentId", id())
+      ->AddVal("Time", context()->time())
       ->AddVal("Stat", "eaten")
       ->Record();
     LG(INFO3) << LABEL << "got eaten";
@@ -77,6 +79,7 @@ void Animal::Tock(int t) {
   if (age > 0 && age % birth_freq_ == 0) {
     context()->NewDatum("AnimalEvents")
       ->AddVal("AgentId", id())
+      ->AddVal("Time", context()->time())
       ->AddVal("Stat", "reproduced")
       ->Record();
     LG(INFO3) << LABEL << "is having 1 child";
@@ -85,15 +88,11 @@ void Animal::Tock(int t) {
 
   for_sale_ = 0;
   outbuf_.PopN(outbuf_.count());
-  cyclus::Manifest mats = inbuf_.PopN(inbuf_.count());
+  cyclus::Manifest mats = inbuf_.PopQty(1);
   double r = ((double)(rand() % 1000000)) / 1000000; // between 0 and 1
-  int nself = alive_[prototype()];
-  int npred = alive_[prototype()];
-  int prob = capture_prob * (npred - nself) / npred*nself;
-  if (nself >= npred && r < capture_prob_) {
-    for_sale_ = 1;
-    outbuf_.PushAll(mats);
-  } else if (r < prob) {
+  double nself = alive_[prototype()];
+  double npred = alive_[outcommod_];
+  if (r < std::exp(nself / npred - 2)) {
     for_sale_ = 1;
     outbuf_.PushAll(mats);
   }

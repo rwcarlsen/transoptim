@@ -33,9 +33,9 @@
           <outcommod_>rabbits</outcommod_>
 
           <bufsize_>1</bufsize_>
-          <lifespan_>10</lifespan_>
-          <birth_freq_>4</birth_freq_>
-          <capture_prob_>0.5</capture_prob_>
+          <lifespan_>4</lifespan_>
+          <birth_freq_>1</birth_freq_>
+          <capture_ratio_>1.0</capture_ratio_>
       </Animal>
     </agent>
   </prototype>
@@ -48,9 +48,9 @@
           <incommod_>rabbits</incommod_>
           <outcommod_>deadwolf</outcommod_>
 
-          <bufsize_>1.8</bufsize_>
-          <lifespan_>10</lifespan_>
-          <birth_freq_>3</birth_freq_>
+          <bufsize_>1</bufsize_>
+          <lifespan_>4</lifespan_>
+          <birth_freq_>1</birth_freq_>
       </Animal>
     </agent>
   </prototype>
@@ -59,22 +59,15 @@
     <name>Deployer</name>
     <agent>
       <DeployInst>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>1</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>2</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>3</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>4</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>5</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>6</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>7</date> </buildorder>
-          <buildorder> <prototype>Rabbit</prototype> <number>50</number> <date>8</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>1</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>2</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>3</date> </buildorder>
+          <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>4</date> </buildorder>
 
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>4</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>5</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>6</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>7</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>8</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>9</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>1</number> <date>10</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>3</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>4</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>5</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>6</date> </buildorder>
       </DeployInst>
     </agent>
   </prototype>

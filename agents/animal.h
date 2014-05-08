@@ -33,9 +33,10 @@ class Animal : public cyclus::Facility {
   /// number of timsteps until natural death
   #pragma cyclus var {'default': 4}
   int lifespan_;
-  /// probability of being captured
-  #pragma cyclus var {'default': 0.9}
-  double capture_prob_;
+  /// probability of being captured when pred population equals this species'
+  /// population.
+  #pragma cyclus var {'default': 2.0}
+  double capture_ratio_;
 
   #pragma cyclus var {'default': 0}
   int for_sale_;
