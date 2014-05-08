@@ -1,5 +1,6 @@
 #include "animal.h"
 #include <time.h>
+#include <algorithm>
 
 #define LG(X) LOG(cyclus::LEV_##X, "Animal")
 
@@ -28,15 +29,22 @@ void Animal::DoRegistration() {
 
 void Animal::Build(cyclus::Agent* parent) {
   cyclus::Facility::Build();
-  alive_[prototype()] += 1;
-  alive_[incommod_] += 1;
+  alive_["in_" + incommod_] += 1;
+  alive_["out_" + outcommod_] += 1;
 }
 
 void Animal::Decommission() {
   context()->UnregisterTrader(&outpolicy_);
   context()->UnregisterTrader(&inpolicy_);
-  alive_[prototype()] -= 1;
-  alive_[incommod_] -= 1;
+  alive_["in_" + incommod_] -= 1;
+  alive_["out_" + outcommod_] -= 1;
+
+  if (alive_["in_" + incommod_] == 0) {
+    context()->KillSim();
+  } else if (alive_["in_" + incommod_] > 5000) {
+    context()->KillSim();
+  }
+
   cyclus::Facility::Decommission();
 }
 
@@ -86,13 +94,15 @@ void Animal::Tock(int t) {
     context()->SchedBuild(this, prototype());
   }
 
+  double nself = alive_["in_" + incommod_];
+  double npred = alive_["in_" + outcommod_];
+  double nprey = alive_["out_" + incommod_];
+
   for_sale_ = 0;
   outbuf_.PopN(outbuf_.count());
-  cyclus::Manifest mats = inbuf_.PopQty(1);
-  double r = ((double)(rand() % 1000000)) / 1000000; // between 0 and 1
-  double nself = alive_[prototype()];
-  double npred = alive_[outcommod_];
-  if (r < std::exp(nself / npred - 2)) {
+  cyclus::Manifest mats = inbuf_.PopN(inbuf_.count());
+  double r = ((double)(rand() % 100000000)) / (double)100000000; // between 0 and 1
+  if (r < std::exp(nself / npred - capture_ratio_)) {
     for_sale_ = 1;
     outbuf_.PushAll(mats);
   }

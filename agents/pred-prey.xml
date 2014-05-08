@@ -2,7 +2,7 @@
 
 <simulation>
   <control>
-    <duration>200</duration>
+    <duration>100</duration>
     <startmonth>1</startmonth>
     <startyear>2000</startyear>
     <decay>0</decay>
@@ -35,7 +35,7 @@
           <bufsize_>1</bufsize_>
           <lifespan_>4</lifespan_>
           <birth_freq_>1</birth_freq_>
-          <capture_ratio_>1.0</capture_ratio_>
+          <capture_ratio_>1.5</capture_ratio_>
       </Animal>
     </agent>
   </prototype>
@@ -48,7 +48,7 @@
           <incommod_>rabbits</incommod_>
           <outcommod_>deadwolf</outcommod_>
 
-          <bufsize_>1</bufsize_>
+          <bufsize_>1.0</bufsize_>
           <lifespan_>4</lifespan_>
           <birth_freq_>1</birth_freq_>
       </Animal>
@@ -64,10 +64,10 @@
           <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>3</date> </buildorder>
           <buildorder> <prototype>Rabbit</prototype> <number>30</number> <date>4</date> </buildorder>
 
-          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>3</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>4</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>5</date> </buildorder>
-          <buildorder> <prototype>Wolf</prototype> <number>15</number> <date>6</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>2</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>3</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>4</date> </buildorder>
+          <buildorder> <prototype>Wolf</prototype> <number>5</number> <date>5</date> </buildorder>
       </DeployInst>
     </agent>
   </prototype>

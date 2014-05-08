@@ -1,5 +1,5 @@
 
-cyclus_root = /home/robert/cyc/install
+cyclus_root = /home/r/cyc/install
 modules = recipe_extractor recipe_mixer separator animal
 CXXFLAGS += -g
 
@@ -29,17 +29,20 @@ all: $(libnames)
 release : CXX_FLAGS = -O3
 release : all
 
-runsim : pred-prey.xml
-	rm -f cyclus.sqlite
-	cyclus -v3 pred-prey.xml --flat-schema
+cyclus.sqlite : pred-prey.xml
+	rm -f $@*
+	cyclus -v3 $< --flat-schema
 
-rabbit : cyclus.sqlite
-	cycpost cyclus.sqlite
-	metric -db cyclus.sqlite deployseries Rabbit
+wolf.dat : cyclus.sqlite
+	cycpost $<
+	metric -db $< deployseries Wolf > $@
 
-wolf : cyclus.sqlite
-	cycpost cyclus.sqlite
-	metric -db cyclus.sqlite deployseries Wolf
+rabbit.dat : cyclus.sqlite
+	cycpost $<
+	metric -db $< deployseries Rabbit > $@
+
+svg : rabbit.plot wolf.dat rabbit.dat
+	gnuplot rabbit.plot
 
 clean:
 	rm -f *.o *.d
@@ -73,7 +76,7 @@ lib%.so : %.foo $(objs)
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
 	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 
-.PRECIOUS: %.gen.h %.gen.cc %.o %.foo
+.PRECIOUS: %.gen.h %.gen.cc %.o %.foo cyclus.sqlite
 
 # disable makes built-in implicit rules
 .SUFFIXES:
