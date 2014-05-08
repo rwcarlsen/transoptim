@@ -1,7 +1,8 @@
 *.o
 *.d
 *.sw*
-*.gen
+*.gen*
 *.so
 *.sqlite
 *.h5
+*.dat
