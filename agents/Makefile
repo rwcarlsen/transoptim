@@ -23,11 +23,22 @@ libnames = $(modules:%=lib%.so)
 all: $(libnames)
 	ls | grep 'lib[a-z].\+\.so' | xargs rm -f
 
+release: CXX_FLAGS=-O3
+release: all
+
 clean:
 	rm -f *.o
 	rm -f *.so
 	rm -f *.gen.c*
 	rm -f *.gen.h*
+
+predprey: pred-prey.xml
+	@rm -f cyclus.sqlite
+	cyclus -v3 --flat-schema $<
+	cycpost cyclus.sqlite
+	metric -db cyclus.sqlite deployseries Rabbit > rabbit.dat
+	metric -db cyclus.sqlite deployseries Wolf > wolf.dat
+	gnuplot pred-prey.plot
 
 ##### pattern rules to build all object files from source #####
 
