@@ -31,6 +31,7 @@ clean:
 	rm -f *.so
 	rm -f *.gen.c*
 	rm -f *.gen.h*
+	rm -f cyclus.sqlite *.dat *.svg
 
 predprey: pred-prey.xml
 	@rm -f cyclus.sqlite
