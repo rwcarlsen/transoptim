@@ -60,7 +60,7 @@ lib%.so : %.o
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
 	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 
-.PRECIOUS: %.gen.h %.gen.cc %.o
+.PRECIOUS: %.gen.h %.gen.cc
 
 # disable makes built-in implicit rules
 .SUFFIXES:
