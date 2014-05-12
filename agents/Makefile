@@ -1,27 +1,29 @@
 
-cyclus_root = /home/r/cyc/install
 modules = recipe_extractor recipe_mixer separator animal
 CXXFLAGS += -g
 
 ##### set default var vals #####
+ifeq ($(strip $(CYCLUS_ROOT)),)
+	CYCLUS_ROOT = $(HOME)/.local $(HOME)/cyc/install /usr/local /usr
+endif
 ifeq ($(strip $(PREFIX)),)
 	PREFIX = $(HOME)/.local
 endif
 
 ##### dependency config #####
-includes += -I$(cyclus_root)/include/cyclus
 includes += -I$(HOME)/.local/include
+includes += $(CYCLUS_ROOT:%=-I%/include/cyclus)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags sqlite3)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags cbc)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags libxml-2.0)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags libxml++-2.6)
 
-libs += -L$(cyclus_root)/lib
+libs += $(CYCLUS_ROOT:%=-L%/lib)
 libs += -L$(HOME)/.local/lib
 libs += -lcycluscore -lkitlus
 
 ##### variable setup #####
-cycpp = $(cyclus_root)/bin/cycpp.py
+cycpp = cycpp.py
 libnames = $(modules:%=lib%.so)
 
 prefix = $(DESTDIR)/$(PREFIX)
