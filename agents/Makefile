@@ -3,6 +3,11 @@ cyclus_root = /home/r/cyc/install
 modules = recipe_extractor recipe_mixer separator animal
 CXXFLAGS += -g
 
+##### set default var vals #####
+ifeq ($(strip $(PREFIX)),)
+	PREFIX = $(HOME)/.local
+endif
+
 ##### dependency config #####
 includes += -I$(cyclus_root)/include/cyclus
 includes += -I$(HOME)/.local/include
@@ -19,12 +24,21 @@ libs += -lcycluscore -lkitlus
 cycpp = $(cyclus_root)/bin/cycpp.py
 libnames = $(modules:%=lib%.so)
 
+prefix = $(DESTDIR)/$(PREFIX)
+ifeq ($(strip $(DESTDIR)),)
+	prefix = $(PREFIX)
+endif
+
 ##### primary targets #####
 all: $(libnames)
 	ls | grep 'lib[a-z].\+\.so' | xargs rm -f
 
 release: CXX_FLAGS=-O3
 release: all
+
+install: release
+	@mkdir -p $(prefix)/lib/cyclus
+	cp $(libnames) $(prefix)/lib/cyclus/
 
 clean:
 	rm -f *.o
