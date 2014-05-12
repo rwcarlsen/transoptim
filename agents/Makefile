@@ -40,7 +40,7 @@ release: all
 
 install: release
 	@mkdir -p $(prefix)/lib/cyclus
-	cp $(libnames) $(prefix)/lib/cyclus/
+	cp *.so $(prefix)/lib/cyclus/
 
 clean:
 	rm -f *.o
