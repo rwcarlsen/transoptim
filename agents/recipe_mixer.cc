@@ -36,7 +36,7 @@ void RecipeMixer::Decommission() {
   cyclus::Facility::Decommission();
 }
 
-void RecipeMixer::Tick(int time) {
+void RecipeMixer::Tick() {
   LG(INFO3) << "RecipeMixer id=" << id() << " is ticking";
   LG(INFO4) << "inbuf1 quantity = " << inbuf1_.quantity();
   LG(INFO4) << "inbuf2 quantity = " << inbuf2_.quantity();
@@ -90,7 +90,7 @@ void RecipeMixer::Tick(int time) {
   Material::Ptr mix = m1->ExtractQty(frac1 * qty);
   mix->Absorb(m2->ExtractQty(frac2 * qty));
 
-  cyclus::MatQuery mq(mix);
+  cyclus::toolkit::MatQuery mq(mix);
   LG(INFO4) << "Mixed " << mix->quantity() << " kg to recipe";
   LG(INFO5) << " u238 = " << mq.mass_frac(922380000);
   LG(INFO5) << " u235 = " << mq.mass_frac(922350000);

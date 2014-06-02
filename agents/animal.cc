@@ -28,7 +28,7 @@ void Animal::EnterNotify() {
 }
 
 void Animal::Build(cyclus::Agent* parent) {
-  cyclus::Facility::Build();
+  cyclus::Facility::Build(parent);
   alive_["in_" + incommod_] += 1;
   alive_["out_" + outcommod_] += 1;
 }
@@ -50,7 +50,7 @@ void Animal::Decommission() {
 
 #define LABEL "Ainimal (id=" << id() << ", proto=" << prototype() << ") "
 
-void Animal::Tock(int t) {
+void Animal::Tock() {
   LG(INFO3) << LABEL << "is tocking";
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
@@ -100,7 +100,7 @@ void Animal::Tock(int t) {
 
   for_sale_ = 0;
   outbuf_.PopN(outbuf_.count());
-  cyclus::Manifest mats = inbuf_.PopN(inbuf_.count());
+  cyclus::toolkit::Manifest mats = inbuf_.PopN(inbuf_.count());
   double r = ((double)(rand() % 100000000)) / (double)100000000; // between 0 and 1
   if (r < std::exp(nself / npred - capture_ratio_)) {
     for_sale_ = 1;

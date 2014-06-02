@@ -1,6 +1,6 @@
 
-modules = recipe_extractor recipe_mixer separator animal
-CXXFLAGS += -g
+src = $(wildcard *.cc)
+libname=librwc.so
 
 ##### set default var vals #####
 ifeq ($(strip $(CYCLUS_ROOT)),)
@@ -20,11 +20,11 @@ includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-c
 
 libs += $(CYCLUS_ROOT:%=-L%/lib)
 libs += -L$(HOME)/.local/lib
-libs += -lcycluscore -lkitlus
+libs += -lcyclus -lkitlus
 
 ##### variable setup #####
 cycpp = cycpp.py
-libnames = $(modules:%=lib%.so)
+objs = $(src:%.cc=%.o)
 
 prefix = $(DESTDIR)/$(PREFIX)
 ifeq ($(strip $(DESTDIR)),)
@@ -32,19 +32,24 @@ ifeq ($(strip $(DESTDIR)),)
 endif
 
 ##### primary targets #####
-all: $(libnames)
-	ls | grep 'lib[a-z].\+\.so' | xargs rm -f
+build: $(libname)
 
-release: CXX_FLAGS=-O3
-release: all
+$(libname) : $(objs)
+	@echo "CXX -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $^ -o $@"
+	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $^ -o $@
+
+debug: CXXFLAGS += -g
+debug: build
+
+release: CXX_FLAGS += -O3
+release: build
 
 install: release
 	@mkdir -p $(prefix)/lib/cyclus
 	cp *.so $(prefix)/lib/cyclus/
 
 clean:
-	rm -f *.o
-	rm -f *.so
+	rm -f *.o *.so
 	rm -f *.gen.c*
 	rm -f *.gen.h*
 	rm -f cyclus.sqlite *.dat *.svg
@@ -58,11 +63,6 @@ predprey: pred-prey.xml
 	gnuplot pred-prey.plot
 
 ##### pattern rules to build all object files from source #####
-
-lib%.so : %.o
-	@echo "CXX -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $< -o $@"
-	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $< -o $@
-	@cp $@ `echo $@ | sed 's/_\(.\)/\u\1/' | sed 's/lib\(.\)\(.*\)\.so/lib\u\1\2.so/'`
 
 %.o : %.gen.cc %.gen.h
 	@echo "CXX -c -fpic $(CXXFLAGS) $(CPPFLAGS) $< -o $o"

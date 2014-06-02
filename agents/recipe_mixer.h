@@ -20,8 +20,8 @@ class RecipeMixer : public cyclus::Facility {
 
   #pragma cyclus
 
-  virtual void Tick(int time);
-  virtual void Tock(int time) {};
+  virtual void Tick();
+  virtual void Tock() {};
 
   double Weight(cyclus::Composition::Ptr c);
 
@@ -33,7 +33,7 @@ class RecipeMixer : public cyclus::Facility {
   #pragma cyclus var {}
   double inbuf1_size_;
   #pragma cyclus var {'capacity': 'inbuf1_size_'}
-  cyclus::ResourceBuff inbuf1_;
+  cyclus::toolkit::ResourceBuff inbuf1_;
 
   #pragma cyclus var {}
   std::string incommod2_;
@@ -42,7 +42,7 @@ class RecipeMixer : public cyclus::Facility {
   #pragma cyclus var {}
   double inbuf2_size_;
   #pragma cyclus var {'capacity': 'inbuf2_size_'}
-  cyclus::ResourceBuff inbuf2_;
+  cyclus::toolkit::ResourceBuff inbuf2_;
 
   #pragma cyclus var {}
   std::string outcommod_;
@@ -51,7 +51,7 @@ class RecipeMixer : public cyclus::Facility {
   #pragma cyclus var {}
   double outbuf_size_;
   #pragma cyclus var {'capacity': 'outbuf_size_'}
-  cyclus::ResourceBuff outbuf_;
+  cyclus::toolkit::ResourceBuff outbuf_;
 
   #pragma cyclus var {}
   double throughput_;

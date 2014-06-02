@@ -2,7 +2,7 @@
 
 #define LG(X) LOG(cyclus::LEV_##X, "RecXtr")
 
-using cyclus::MatQuery;
+using cyclus::toolkit::MatQuery;
 using cyclus::Material;
 using cyclus::Composition;
 using cyclus::ResCast;
@@ -37,7 +37,7 @@ void RecipeExtractor::Decommission() {
   cyclus::Facility::Decommission();
 }
 
-void RecipeExtractor::Tick(int time) {
+void RecipeExtractor::Tick() {
   if (inbuf_.count() == 0) {
     return;
   }

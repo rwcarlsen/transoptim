@@ -5,54 +5,54 @@
     <duration>10</duration>
     <startmonth>1</startmonth>
     <startyear>2000</startyear>
-    <decay>0</decay>
   </control>
 
-  <commodity><name>lwr_fresh</name></commodity>
-  <commodity><name>lwr_mox</name></commodity>
-  <commodity><name>lwr_spent</name></commodity>
-  <commodity><name>depleted_u</name></commodity>
-  <commodity><name>sep_stream</name></commodity>
-  <commodity><name>waste</name></commodity>
+  <archetypes>
+    <spec><lib>agents</lib><name>Source</name></spec>
+    <spec><lib>agents</lib><name>Sink</name></spec>
+    <spec><lib>rwc</lib><name>RecipeMixer</name></spec>
+    <spec><lib>rwc</lib><name>Separator</name></spec>
+    <spec><lib>cycamore</lib><name>BatchReactor</name></spec>
+  </archetypes>
 
   <prototype>
     <name>FreshFuelFab</name>
-    <agent>
+    <config>
       <Source>
-        <commod_>lwr_fresh</commod_>
-        <recipe_name_>lwr_fresh_fuel</recipe_name_>
-        <capacity_>10</capacity_>
+        <commod>lwr_fresh</commod>
+        <recipe_name>lwr_fresh_fuel</recipe_name>
+        <capacity>10</capacity>
       </Source>
-    </agent>
+    </config>
   </prototype>
 
   <prototype>
     <name>DepletedUSource</name>
-    <agent>
+    <config>
       <Source>
-        <commod_>depleted_u</commod_>
-        <recipe_name_>depleted_u</recipe_name_>
-        <capacity_>10</capacity_>
+        <commod>depleted_u</commod>
+        <recipe_name>depleted_u</recipe_name>
+        <capacity>10</capacity>
       </Source>
-    </agent>
+    </config>
   </prototype>
 
   <prototype>
     <name>Repository</name>
-    <agent>
+    <config>
       <Sink>
-        <capacity_>10</capacity_>
-        <in_commods_>
+        <capacity>10</capacity>
+        <in_commods>
           <val>waste</val>
           <val>lwr_spent</val>
-        </in_commods_>
+        </in_commods>
       </Sink>
-    </agent>
+    </config>
   </prototype>
 
   <prototype>
     <name>Separations</name>
-    <agent>
+    <config>
       <Separator>
         <incommod_>lwr_spent</incommod_>
         <outcommod_>sep_stream</outcommod_>
@@ -72,12 +72,12 @@
             <key>942420000</key><val>1.0</val>
         </effs_>
       </Separator>
-    </agent>
+    </config>
   </prototype>
 
   <prototype>
     <name>SpentFuelFab</name>
-    <agent>
+    <config>
       <RecipeMixer>
         <incommod1_>depleted_u</incommod1_>
         <incommod2_>sep_stream</incommod2_>
@@ -90,12 +90,12 @@
         <outbuf_size_>1</outbuf_size_>
         <throughput_>1</throughput_>
       </RecipeMixer>
-    </agent>
+    </config>
   </prototype>
 
   <prototype>
     <name>LWRReactor</name>
-    <agent>
+    <config>
       <BatchReactor>
 
         <fuel>         
@@ -133,7 +133,7 @@
         </commod_pref>
 
       </BatchReactor>
-    </agent>
+    </config>
   </prototype>
 
   <agent>

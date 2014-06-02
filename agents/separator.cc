@@ -2,7 +2,7 @@
 
 #define LG(X) LOG(cyclus::LEV_##X, "Seprat")
 
-using cyclus::MatQuery;
+using cyclus::toolkit::MatQuery;
 using cyclus::Material;
 using cyclus::CompMap;
 using cyclus::Composition;
@@ -40,7 +40,7 @@ void Separator::Decommission() {
   cyclus::Facility::Decommission();
 }
 
-void Separator::Tick(int time) {
+void Separator::Tick() {
   LG(INFO3) << "Separator id=" << id() << " is ticking";
   LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();

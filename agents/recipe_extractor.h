@@ -20,8 +20,8 @@ class RecipeExtractor : public cyclus::Facility {
 
   #pragma cyclus
 
-  virtual void Tick(int time);
-  virtual void Tock(int time) {};
+  virtual void Tick();
+  virtual void Tock() {};
 
  private:
   #pragma cyclus var {}
@@ -33,7 +33,7 @@ class RecipeExtractor : public cyclus::Facility {
   #pragma cyclus var {}
   double inbuf_size_;
   #pragma cyclus var {'capacity': 'inbuf_size_'}
-  cyclus::ResourceBuff inbuf_;
+  cyclus::toolkit::ResourceBuff inbuf_;
 
   #pragma cyclus var {}
   std::string outcommod_;
@@ -42,14 +42,14 @@ class RecipeExtractor : public cyclus::Facility {
   #pragma cyclus var {}
   double outbuf_size_;
   #pragma cyclus var {'capacity': 'outbuf_size_'}
-  cyclus::ResourceBuff outbuf_;
+  cyclus::toolkit::ResourceBuff outbuf_;
 
   #pragma cyclus var {}
   std::string wastecommod_;
   #pragma cyclus var {}
   double wastebuf_size_;
   #pragma cyclus var {'capacity': 'wastebuf_size_'}
-  cyclus::ResourceBuff wastebuf_;
+  cyclus::toolkit::ResourceBuff wastebuf_;
 
   #pragma cyclus var {}
   double throughput_;
