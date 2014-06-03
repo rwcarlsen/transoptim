@@ -173,17 +173,25 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 		}
 
 		// add in waste penalty
-		ags, err := query.AllAgents(db, simid, fac.Proto)
-		ids := make([]int, len(ags))
-		for i, a := range ags {
-			ids[i] = a.Id
-		}
-		for t := 0; t < scen.SimDur; t++ {
-			mass, err := query.InvMassAt(db, simid, t, ids...)
+		if !fac.IsRepo {
+			ags, err := query.AllAgents(db, simid, fac.Proto)
 			if err != nil {
 				return 0, err
 			}
-			totcost += PV(mass*fac.WasteCost, t, scen.Discount)
+			ids := make([]int, len(ags))
+			for i, a := range ags {
+				ids[i] = a.Id
+			}
+			for t := 0; t < scen.SimDur; t++ {
+				mat, err := query.InvAt(db, simid, t, ids...)
+				if err != nil {
+					return 0, err
+				}
+				for nuc, qty := range mat {
+					nucstr := fmt.Sprint(nuc)
+					totcost += PV(scen.NuclideCost[nucstr]*float64(qty), t, scen.Discount)
+				}
+			}
 		}
 	}
 
