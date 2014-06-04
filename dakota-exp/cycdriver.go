@@ -16,6 +16,7 @@ import (
 
 	"code.google.com/p/go-uuid/uuid"
 	"github.com/mxk/go-sqlite/sqlite3"
+	"github.com/rwcarlsen/cyan/nuc"
 	"github.com/rwcarlsen/cyan/post"
 	"github.com/rwcarlsen/cyan/query"
 )
@@ -207,7 +208,8 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 	if err != nil {
 		return 0, err
 	}
-	return totcost / (joules + 1e-20), nil
+	mwh := joules / nuc.MWh
+	return totcost / (mwh + 1e-30), nil
 }
 
 func PV(amt float64, nt int, rate float64) float64 {
