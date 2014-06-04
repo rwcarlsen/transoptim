@@ -1,9 +1,5 @@
-{{$l := .ConstrLow}}
-{{$a := .ConstrMat}}
-{{$u := .ConstrUp}}
-
-{{$eqa := .EqConstrMat}}
-{{$eqtarget := .EqConstrTarget}}
+{{$l := .ConstrLow}} {{$a := .ConstrMat}} {{$u := .ConstrUp}}
+{{$eqa := .EqConstrMat}} {{$eqtarget := .EqConstrTarget}}
 
 strategy
     graphics

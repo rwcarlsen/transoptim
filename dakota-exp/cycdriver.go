@@ -178,10 +178,17 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 			if err != nil {
 				return 0, err
 			}
+
+			// InvAt uses all agents if no ids are passed - so we need to skip from here
+			if len(ags) == 0 {
+				continue
+			}
+
 			ids := make([]int, len(ags))
 			for i, a := range ags {
 				ids[i] = a.Id
 			}
+
 			for t := 0; t < scen.SimDur; t++ {
 				mat, err := query.InvAt(db, simid, t, ids...)
 				if err != nil {
@@ -200,7 +207,7 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 	if err != nil {
 		return 0, err
 	}
-	return totcost / (joules + 1), nil
+	return totcost / (joules + 1e-20), nil
 }
 
 func PV(amt float64, nt int, rate float64) float64 {
