@@ -94,7 +94,7 @@ func main() {
 	err = GenCyclusInfile(scen, cycin)
 	fatalif(err)
 
-	cmd := exec.Command(scen.CyclusBin, "--flat-schema", cycin, "-o", cycout)
+	cmd := exec.Command(scen.CyclusBin, cycin, "-o", cycout)
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	fatalif(err)

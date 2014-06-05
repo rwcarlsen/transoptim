@@ -1,4 +1,5 @@
 <simulation>
+  <schematype>flat</schematype>
   <control>
     <duration>10</duration>
     <startmonth>1</startmonth>

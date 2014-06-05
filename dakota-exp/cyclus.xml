@@ -1,4 +1,5 @@
 <simulation>
+  <schematype>flat</schematype>
   <control>
     <duration>{{.SimDur}}</duration>
     <startmonth>1</startmonth>
