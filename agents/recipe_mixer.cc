@@ -42,38 +42,46 @@ void RecipeMixer::Tick() {
   LG(INFO4) << "inbuf2 quantity = " << inbuf2_.quantity();
   LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
   double qty = std::min(throughput_, outbuf_.space());
-  if (inbuf1_.count() == 0 || inbuf2_.count() == 0 || qty < cyclus::eps()) {
+  if (inbuf1_.quantity() < cyclus::eps() || inbuf2_.quantity() < cyclus::eps() || qty < cyclus::eps()) {
     return;
   }
 
   // combine inbuf resources to single mats for querying
   std::vector<Material::Ptr> mats;
   mats = ResCast<Material>(inbuf1_.PopN(inbuf1_.count()));
-  for (int i = 1; i < mats.size(); ++i) {
-    mats[0]->Absorb(mats[i]);
-  }
   Material::Ptr m1 = mats[0];
+  for (int i = 1; i < mats.size(); ++i) {
+    m1->Absorb(mats[i]);
+  }
 
   mats = ResCast<Material>(inbuf2_.PopN(inbuf2_.count()));
-  for (int i = 1; i < mats.size(); ++i) {
-    mats[0]->Absorb(mats[i]);
-  }
   Material::Ptr m2 = mats[0];
+  for (int i = 1; i < mats.size(); ++i) {
+    m2->Absorb(mats[i]);
+  }
 
   // determine frac needed from each input stream
   Composition::Ptr tgt = context()->GetRecipe(outrecipe_);
   double frac2 = kitlus::CosiFissileFrac(tgt, m1->comp(), m2->comp());
   double frac1 = 1 - frac2;
+  if (frac2 < 0) {
+    inbuf1_.Push(m1);
+    inbuf2_.Push(m2);
+    LG(ERROR) << "fissile stream has too low reactivity";
+    return;
+  }
 
   LG(INFO4) << "filler frac = " << frac1;
   LG(INFO4) << "fissile frac = " << frac2;
 
   // deal with stream quantity and outbuf space constraints
-  double ratio1 = frac1 * qty / m1->quantity();
-  double ratio2 = frac2 * qty / m2->quantity();
-  if (ratio1 <= 1 && ratio2 <= 1) {
+  double qty1 = frac1 * qty;
+  double qty2 = frac2 * qty;
+  double qty1diff = m1->quantity() - qty1;
+  double qty2diff = m2->quantity() - qty2;
+  if (qty1diff >= 0 && qty2diff >= 0) {
     // not constrained by inbuf quantities
-  } else if (ratio1 > ratio2) {
+  } else if (qty1diff < qty2diff ) {
     // constrained by inbuf1
     LG(INFO5) << "Constrained by incommod '" << incommod1_
               << "' - reducing qty from " << qty
@@ -87,8 +95,8 @@ void RecipeMixer::Tick() {
     qty = m2->quantity() / frac2;
   }
 
-  Material::Ptr mix = m1->ExtractQty(frac1 * qty);
-  mix->Absorb(m2->ExtractQty(frac2 * qty));
+  Material::Ptr mix = m1->ExtractQty(std::min(frac1 * qty, m1->quantity()));
+  mix->Absorb(m2->ExtractQty(std::min(frac2 * qty, m2->quantity())));
 
   cyclus::toolkit::MatQuery mq(mix);
   LG(INFO4) << "Mixed " << mix->quantity() << " kg to recipe";

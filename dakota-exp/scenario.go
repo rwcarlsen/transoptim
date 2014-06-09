@@ -149,7 +149,10 @@ func (s *Scenario) UpperBounds() *mat64.Dense {
 	for f, fac := range s.Facs {
 		for n := 0; n < nperiods; n++ {
 			v := (s.MaxPower[n]/fac.Cap + 1)
-			if fac.Cap != 0 {
+			t := s.BuildPeriod + n*s.BuildPeriod
+			if !fac.Available(t) {
+				up.Set(f*nperiods+n, 0, 0)
+			} else if fac.Cap != 0 {
 				up.Set(f*nperiods+n, 0, v)
 			} else {
 				up.Set(f*nperiods+n, 0, 25)
