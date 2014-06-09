@@ -1,19 +1,128 @@
 {
-    "SimDur": 6,
+    "SimDur": 480,
 	"DakotaTmpl": "dakota.in",
 	"CyclusTmpl": "cyclus.xml",
 	"CyclusBin": "/home/r/cyc/install/bin/cyclus",
-	"BuildPeriod": 2,
+	"BuildPeriod": 12,
     "NuclideCost": {
-        "952430000": 1,
-        "922380000": 5
+        "942390000": 1
     },
-    "Discount": 0.04,
+    "Discount": 0.05,
 	"Facs": [
-        {"Proto": "source", "Cap": 0, "Life": 0, "CapitalCost": 10, "OpCost": 1, "BuildAfter": 0},
-        {"Proto": "reactor", "Cap": 1, "Life": 0, "CapitalCost": 10, "OpCost": 2, "BuildAfter": 0},
-        {"Proto": "sink", "Cap": 0, "Life": 0, "CapitalCost": 10, "OpCost": 1, "BuildAfter": 0, "IsRepo": true}
+        {
+            "Proto": "depleted_u_source",
+            "CapitalCost": 1,
+            "OpCost": 1,
+            "BuildAfter": -1
+        }, {
+            "Proto": "fresh_fuel_fab",
+            "CapitalCost": 1,
+            "OpCost": 1,
+            "BuildAfter": -1
+        }, {
+            "Proto": "repo",
+            "CapitalCost": 10,
+            "OpCost": 1,
+            "BuildAfter": 0,
+            "IsRepo": true
+        }, {
+            "Proto": "separations",
+            "CapitalCost": 100,
+            "OpCost": 10,
+            "BuildAfter": 100
+        }, {
+            "Proto": "spent_fuel_fab",
+            "CapitalCost": 10,
+            "OpCost": 1,
+            "BuildAfter": 100
+        }, {
+            "Proto": "lwr_reactor",
+            "CapitalCost": 50,
+            "OpCost": 1,
+            "Cap": 1, 
+            "Life": 240
+        }
     ],
-	"MinPower": [1, 3],
-	"MaxPower": [1, 3]
+	"MinPower": [
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        122,
+        124,
+        126,
+        128,
+        130,
+        132,
+        134,
+        136,
+        138,
+        140,
+        144,
+        148,
+        152,
+        156,
+        160,
+        170,
+        180,
+        190
+    ],
+	"MaxPower": [
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        122,
+        124,
+        126,
+        128,
+        130,
+        132,
+        134,
+        136,
+        138,
+        140,
+        144,
+        148,
+        152,
+        156,
+        160,
+        170,
+        180,
+        190
+    ]
 }
