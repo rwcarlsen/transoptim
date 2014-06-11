@@ -11,33 +11,33 @@
 	"Facs": [
         {
             "Proto": "depleted_u_source",
-            "CapitalCost": 1,
+            "CapitalCost": 10,
             "OpCost": 1,
             "BuildAfter": -1
         }, {
             "Proto": "fresh_fuel_fab",
-            "CapitalCost": 1,
+            "CapitalCost": 10,
             "OpCost": 1,
             "BuildAfter": -1
         }, {
             "Proto": "repo",
-            "CapitalCost": 10,
+            "CapitalCost": 5000,
             "OpCost": 1,
             "BuildAfter": 0,
-            "IsRepo": true
+            "WasteDiscount": 0.5
         }, {
             "Proto": "separations",
-            "CapitalCost": 100,
-            "OpCost": 10,
+            "CapitalCost": 1000,
+            "OpCost": 5,
             "BuildAfter": 100
         }, {
             "Proto": "spent_fuel_fab",
-            "CapitalCost": 10,
+            "CapitalCost": 100,
             "OpCost": 1,
             "BuildAfter": 100
         }, {
             "Proto": "lwr_reactor",
-            "CapitalCost": 50,
+            "CapitalCost": 500,
             "OpCost": 1,
             "Cap": 1, 
             "Life": 240

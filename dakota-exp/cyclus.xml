@@ -42,7 +42,7 @@
     <name>repo</name>
     <config>
       <Sink>
-        <capacity>1e10</capacity>
+        <capacity>1e6</capacity>
         <in_commods>
           <val>waste</val>
           <val>lwr_spent</val>

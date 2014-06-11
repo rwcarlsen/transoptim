@@ -31,9 +31,9 @@ type Facility struct {
 	// BuildAfter is the time step after which this facility type can be built.
 	// -1 for never available, and 0 for always available.
 	BuildAfter int
-	// IsRepo is true if this facility type represents a repository that is
-	// exempt from the objective's waste penalty.
-	IsRepo bool
+	// WasteDiscount represents the fraction is discounted from the waste cost
+	// for this facility.
+	WasteDiscount float64
 }
 
 // Alive returns whether or not a facility built at the specified time is
