@@ -291,7 +291,7 @@ func (s *Scenario) Nvars() int {
 }
 
 func (s *Scenario) nPeriods() int {
-	return (s.SimDur+1)/s.BuildPeriod - 1
+	return (s.SimDur) / s.BuildPeriod
 }
 
 func findLine(data []byte, pos int64) (line, col int) {
