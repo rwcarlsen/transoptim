@@ -34,6 +34,9 @@ type Facility struct {
 	// WasteDiscount represents the fraction is discounted from the waste cost
 	// for this facility.
 	WasteDiscount float64
+	// Ninitial is the number of this facility type deployed at simulation
+	// start.
+	Ninitial int
 }
 
 // Alive returns whether or not a facility built at the specified time is
@@ -125,6 +128,13 @@ func (s *Scenario) InitParams(vals []int) {
 		s.Params[i].Proto = s.Facs[f].Proto
 		s.Params[i].N = val
 	}
+
+	for _, fac := range s.Facs {
+		if fac.Ninitial == 0 {
+			continue
+		}
+		s.Params = append(s.Params, Param{Time: 1, Proto: fac.Proto, N: fac.Ninitial})
+	}
 }
 
 func (s *Scenario) VarNames() []string {
@@ -153,6 +163,12 @@ func (s *Scenario) UpperBounds() *mat64.Dense {
 			if !fac.Available(t) {
 				up.Set(f*nperiods+n, 0, 0)
 			} else if fac.Cap != 0 {
+				if fac.Alive(1, t) {
+					v -= float64(fac.Ninitial)
+				}
+				if v < 0 {
+					v = 0
+				}
 				up.Set(f*nperiods+n, 0, v)
 			} else {
 				up.Set(f*nperiods+n, 0, 25)
@@ -205,18 +221,33 @@ func (s *Scenario) SupportConstr() (low, A, up *mat64.Dense) {
 func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 	nperiods := s.nPeriods()
 
+	tmpl := make([]float64, len(s.MinPower))
+	tmpu := make([]float64, len(s.MaxPower))
+	copy(tmpl, s.MinPower)
+	copy(tmpu, s.MaxPower)
+	// correct for initially built capacity
+	i := 0
+	for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
+		cap := 0.0
+		for _, fac := range s.Facs {
+			if fac.Alive(1, t) {
+				cap += fac.Cap * float64(fac.Ninitial)
+			}
+		}
+		tmpl[i] -= cap
+		tmpu[i] -= cap
+		i++
+	}
+
+	low = mat64.NewDense(nperiods, 1, tmpl)
+	up = mat64.NewDense(nperiods, 1, tmpu)
 	A = mat64.NewDense(nperiods, s.Nvars(), nil)
-	tmp := make([]float64, len(s.MinPower))
-	copy(tmp, s.MinPower)
-	low = mat64.NewDense(nperiods, 1, tmp)
-	copy(tmp, s.MaxPower)
-	up = mat64.NewDense(nperiods, 1, tmp)
 
 	for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
 		for f, fac := range s.Facs {
-			for n := 0; n < nperiods; n++ {
-				if fac.Alive(n*s.BuildPeriod+1, t) {
-					i := f*nperiods + n
+			for n := 1; n <= nperiods; n++ {
+				if fac.Alive(n*s.BuildPeriod, t) {
+					i := f*nperiods + (n - 1)
 					A.Set(t/s.BuildPeriod-1, i, fac.Cap)
 				}
 			}

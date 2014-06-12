@@ -143,10 +143,6 @@
     <config>
       <DeployInst>{{range .Params}}
         <buildorder> <prototype>{{.Proto}}</prototype> <number>{{.N}}</number> <date>{{.Time}}</date> </buildorder> {{end}}
-
-        <buildorder> <prototype>lwr_reactor</prototype> <number>100</number> <date>1</date> </buildorder>
-        <buildorder> <prototype>depleted_u_source</prototype> <number>1</number> <date>1</date> </buildorder>
-        <buildorder> <prototype>fresh_fuel_fab</prototype> <number>1</number> <date>1</date> </buildorder>
       </DeployInst>
     </config>
   </prototype>

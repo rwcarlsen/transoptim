@@ -13,12 +13,14 @@
             "Proto": "depleted_u_source",
             "CapitalCost": 10,
             "OpCost": 1,
-            "BuildAfter": -1
+            "BuildAfter": -1,
+            "Ninitial": 1
         }, {
             "Proto": "fresh_fuel_fab",
             "CapitalCost": 10,
             "OpCost": 1,
-            "BuildAfter": -1
+            "BuildAfter": -1,
+            "Ninitial": 1
         }, {
             "Proto": "repo",
             "CapitalCost": 5000,
@@ -40,7 +42,8 @@
             "CapitalCost": 500,
             "OpCost": 1,
             "Cap": 1, 
-            "Life": 20
+            "Life": 20,
+            "Ninitial": 100
         }
     ],
 	"MinPower": [
