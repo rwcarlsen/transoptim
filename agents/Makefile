@@ -42,7 +42,7 @@ $(libname) : $(objs)
 debug: CXXFLAGS += -g
 debug: build
 
-release: CXX_FLAGS += -O3
+release: CXXFLAGS += -O3
 release: build
 
 install: release
