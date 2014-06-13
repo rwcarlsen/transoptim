@@ -15,7 +15,7 @@ import (
 	"text/template"
 
 	"code.google.com/p/go-uuid/uuid"
-	"github.com/mxk/go-sqlite/sqlite3"
+	_ "github.com/mxk/go-sqlite/sqlite3"
 	"github.com/rwcarlsen/cyan/nuc"
 	"github.com/rwcarlsen/cyan/post"
 	"github.com/rwcarlsen/cyan/query"
@@ -55,17 +55,17 @@ func main() {
 
 	if *metric != "" {
 		// post process cyclus output db
-		conn, err := sqlite3.Open(*metric)
+		db, err := sql.Open("sqlite3", *metric)
 		fatalif(err)
-		defer conn.Close()
+		defer db.Close()
 
-		fatalif(post.Prepare(conn))
-		defer post.Finish(conn)
+		fatalif(post.Prepare(db))
+		defer post.Finish(db)
 
-		simids, err := post.GetSimIds(conn)
+		simids, err := post.GetSimIds(db)
 		fatalif(err)
 
-		ctx := post.NewContext(conn, simids[0], nil)
+		ctx := post.NewContext(db, simids[0])
 		if err := ctx.WalkAll(); err != nil {
 			fmt.Println(err)
 		}
@@ -100,17 +100,17 @@ func main() {
 	fatalif(err)
 
 	// post process cyclus output db
-	conn, err := sqlite3.Open(cycout)
+	db, err := sql.Open("sqlite3", cycout)
 	fatalif(err)
-	defer conn.Close()
+	defer db.Close()
 
-	fatalif(post.Prepare(conn))
-	defer post.Finish(conn)
+	fatalif(post.Prepare(db))
+	defer post.Finish(db)
 
-	simids, err := post.GetSimIds(conn)
+	simids, err := post.GetSimIds(db)
 	fatalif(err)
 
-	ctx := post.NewContext(conn, simids[0], nil)
+	ctx := post.NewContext(db, simids[0])
 	err = ctx.WalkAll()
 	fatalif(err)
 
