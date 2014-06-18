@@ -4,27 +4,34 @@ $(info "src: $(src)")
 libname=librwc.so
 
 ##### set default var vals #####
-ifeq ($(strip $(CYCLUS_ROOT)),)
-	CYCLUS_ROOT = $(HOME)/.local $(HOME)/cyc/install /usr/local /usr
-endif
 ifeq ($(strip $(PREFIX)),)
 	PREFIX = $(HOME)/.local
 endif
 
+ifeq ($(strip $(CYCLUS_ROOT)),)
+ifneq ($(strip $(shell which cyclus)),)
+CYCLUS_ROOT = $(strip $(shell cyclus --install-path))
+else
+CYCLUS_ROOT = $(HOME)/.local
+endif
+endif
+
+LDFLAGS +="-Wl,-rpath,$(CYCLUS_ROOT)/lib,-rpath,$(HOME)/.local/lib"
+
 ##### dependency config #####
 includes += -I$(HOME)/.local/include
-includes += $(CYCLUS_ROOT:%=-I%/include/cyclus)
+includes += -I$(CYCLUS_ROOT)/include/cyclus
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags sqlite3)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags cbc)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags libxml-2.0)
 includes += $(shell export PKG_CONFIG_PATH="$(HOME)/.local/lib/pkgconfig"; pkg-config --cflags libxml++-2.6)
 
-libs += $(CYCLUS_ROOT:%=-L%/lib)
+libs += -L$(CYCLUS_ROOT)/lib
 libs += -L$(HOME)/.local/lib
 libs += -lcyclus -lkitlus
 
 ##### variable setup #####
-cycpp = cycpp.py
+cycpp = $(CYCLUS_ROOT)/bin/cycpp.py
 objs = $(src:%.cc=%.o)
 
 prefix = $(DESTDIR)/$(PREFIX)
@@ -37,7 +44,7 @@ build: $(libname)
 
 $(libname) : $(objs)
 	@echo "CXX -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $^ -o $@"
-	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(libs) $^ -o $@
+	@$(CXX) -shared -fpic -rdynamic $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) $(libs) $^ -o $@
 
 debug: CXXFLAGS += -g
 debug: build
@@ -71,12 +78,12 @@ predprey: pred-prey.xml
 
 %.gen.cc: %.cc
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
-	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
+	@python2 $(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 	sed -i 's/$*.h/$*.gen.h/' $@
 
 %.gen.h: %.h
 	@echo "cycpp --cpp-path=$(CXX) --pass3-use-orig $< -o $@"
-	@$(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
+	@python2 $(cycpp) --cpp-path=$(CXX) --pass3-use-orig $(includes) $< -o $@ 
 
 .PRECIOUS: %.gen.h %.gen.cc
 
