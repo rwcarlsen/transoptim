@@ -264,10 +264,18 @@ func (s *Scenario) PowerConstr() (low, A, up *mat64.Dense) {
 func (s *Scenario) AfterConstr() (A, target *mat64.Dense) {
 	nperiods := s.nPeriods()
 
-	A = mat64.NewDense(s.Nvars(), s.Nvars(), nil)
+	// get facilities that have build time constraints
+	constr := []Facility{}
+	for _, fac := range s.Facs {
+		if fac.BuildAfter != 0 {
+			constr = append(constr, fac)
+		}
+	}
+
+	A = mat64.NewDense(s.nPeriods()*len(constr), s.Nvars(), nil)
 	target = mat64.NewDense(s.Nvars(), 1, nil)
 
-	for f, fac := range s.Facs {
+	for f, fac := range constr {
 		for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
 			if !fac.Available(t) {
 				r := f*nperiods + t/s.BuildPeriod - 1

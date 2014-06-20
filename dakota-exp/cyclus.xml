@@ -96,7 +96,6 @@
 
   <prototype>
     <name>lwr_reactor</name>
-    <lifetime>240</lifetime>
     <config>
       <BatchReactor>
 

@@ -1,5 +1,5 @@
 {
-    "SimDur": 80,
+    "SimDur": 120,
 	"DakotaTmpl": "dakota.in",
 	"CyclusTmpl": "cyclus.xml",
 	"CyclusBin": "/home/r/cyc/install/bin/cyclus",
@@ -31,35 +31,43 @@
             "Proto": "separations",
             "CapitalCost": 1000,
             "OpCost": 5,
-            "BuildAfter": 10
+            "BuildAfter": 30
         }, {
             "Proto": "spent_fuel_fab",
             "CapitalCost": 100,
             "OpCost": 1,
-            "BuildAfter": 10
+            "BuildAfter": 30
         }, {
             "Proto": "lwr_reactor",
             "CapitalCost": 500,
             "OpCost": 1,
             "Cap": 1, 
             "Life": 20,
-            "Ninitial": 100
+            "Ninitial": 10
         }
     ],
 	"MinPower": [
-        100,
-        101,
-        103,
-        110,
-        120,
-        135
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        20
     ],
 	"MaxPower": [
-        100,
-        101,
-        103,
-        110,
-        120,
-        135
+        10,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
     ]
 }
