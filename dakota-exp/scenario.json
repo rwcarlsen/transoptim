@@ -1,32 +1,26 @@
 {
-    "SimDur": 120,
+    "SimDur": 121,
 	"DakotaTmpl": "dakota.in",
 	"CyclusTmpl": "cyclus.xml",
 	"CyclusBin": "/home/r/cyc/install/bin/cyclus",
 	"BuildPeriod": 12,
     "NuclideCost": {
-        "942390000": 1
+        "942390000": 0
     },
     "Discount": 0.05,
 	"Facs": [
         {
-            "Proto": "depleted_u_source",
-            "CapitalCost": 10,
+            "Proto": "lwr_reactor",
+            "CapitalCost": 500,
             "OpCost": 1,
-            "BuildAfter": -1,
-            "Ninitial": 1
-        }, {
-            "Proto": "fresh_fuel_fab",
-            "CapitalCost": 10,
-            "OpCost": 1,
-            "BuildAfter": -1,
-            "Ninitial": 1
+            "Cap": 1, 
+            "Ninitial": 10
         }, {
             "Proto": "repo",
             "CapitalCost": 5000,
             "OpCost": 1,
             "BuildAfter": 0,
-            "WasteDiscount": 0.5
+            "WasteDiscount": 0.0
         }, {
             "Proto": "separations",
             "CapitalCost": 1000,
@@ -38,12 +32,17 @@
             "OpCost": 1,
             "BuildAfter": 30
         }, {
-            "Proto": "lwr_reactor",
-            "CapitalCost": 500,
+            "Proto": "depleted_u_source",
+            "CapitalCost": 10,
             "OpCost": 1,
-            "Cap": 1, 
-            "Life": 20,
-            "Ninitial": 10
+            "BuildAfter": -1,
+            "Ninitial": 1
+        }, {
+            "Proto": "fresh_fuel_fab",
+            "CapitalCost": 10,
+            "OpCost": 1,
+            "BuildAfter": -1,
+            "Ninitial": 1
         }
     ],
 	"MinPower": [
@@ -59,7 +58,7 @@
         20
     ],
 	"MaxPower": [
-        10,
+        20,
         20,
         20,
         20,

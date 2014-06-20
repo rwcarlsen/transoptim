@@ -272,8 +272,9 @@ func (s *Scenario) AfterConstr() (A, target *mat64.Dense) {
 		}
 	}
 
-	A = mat64.NewDense(s.nPeriods()*len(constr), s.Nvars(), nil)
-	target = mat64.NewDense(s.Nvars(), 1, nil)
+	nconstr := len(constr) * nperiods
+	A = mat64.NewDense(nconstr, s.Nvars(), nil)
+	target = mat64.NewDense(nconstr, 1, nil)
 
 	for f, fac := range constr {
 		for t := s.BuildPeriod; t < s.SimDur; t += s.BuildPeriod {
@@ -330,7 +331,7 @@ func (s *Scenario) Nvars() int {
 }
 
 func (s *Scenario) nPeriods() int {
-	return (s.SimDur) / s.BuildPeriod
+	return (s.SimDur - 1) / s.BuildPeriod
 }
 
 func findLine(data []byte, pos int64) (line, col int) {
