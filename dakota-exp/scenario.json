@@ -25,12 +25,12 @@
             "Proto": "separations",
             "CapitalCost": 1000,
             "OpCost": 5,
-            "BuildAfter": 30
+            "BuildAfter": 40
         }, {
             "Proto": "spent_fuel_fab",
             "CapitalCost": 100,
             "OpCost": 1,
-            "BuildAfter": 30
+            "BuildAfter": 40
         }, {
             "Proto": "depleted_u_source",
             "CapitalCost": 10,
