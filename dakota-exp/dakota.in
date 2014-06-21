@@ -2,7 +2,6 @@
 {{$eqa := .EqConstrMat}} {{$eqtarget := .EqConstrTarget}}
 
 strategy
-    graphics
     tabular_graphics_data
         tabular_graphics_file = 'cycopt.dat'
     single_method
@@ -17,13 +16,17 @@ method
     linear_equality_constraint_matrix = {{range $row, $foo := $eqa.Col nil 0}}{{range $col, $bar := $eqa.Row nil 0}} {{$eqa.At $row $col}}{{end}}
                                         {{end}}
 
-    max_iterations = 1000
-    max_function_evaluations 1000
+    max_iterations = 500
+    max_function_evaluations 5000
     convergence_tolerance = 1e-6
     soga
-        population_size 50
+        population_size 100
+        mutation_type replace_uniform
+            mutation_rate 0.03
+        crossover_type
+            multi_point_real 2
         fitness_type merit_function
-            constraint_penalty 1.0
+            constraint_penalty 0.1
 
 model
     single
