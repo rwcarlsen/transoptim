@@ -171,7 +171,7 @@ func (s *Scenario) UpperBounds() *mat64.Dense {
 				}
 				up.Set(f*nperiods+n, 0, v)
 			} else {
-				up.Set(f*nperiods+n, 0, 25)
+				up.Set(f*nperiods+n, 0, 10)
 			}
 		}
 	}

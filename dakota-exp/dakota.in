@@ -18,7 +18,7 @@ method
 
     max_iterations = 500
     max_function_evaluations 5000
-    convergence_tolerance = 1e-6
+    convergence_tolerance = 1e-8
     soga
         population_size 100
         mutation_type replace_uniform
@@ -27,6 +27,9 @@ method
             multi_point_real 2
         fitness_type merit_function
             constraint_penalty 0.1
+        convergence_type average_fitness_tracker
+            num_generations    30
+            percent_change     0.0
 
 model
     single
