@@ -23,11 +23,12 @@ method
         population_size 100
         print_each_pop
         mutation_type replace_uniform
-            mutation_rate 0.03
+            mutation_rate 0.08
         crossover_type
             multi_point_real 2
         fitness_type merit_function
-            constraint_penalty 0.1
+            constraint_penalty .1
+        replacement_type elitist
         convergence_type average_fitness_tracker
             num_generations    30
             percent_change     0.0
