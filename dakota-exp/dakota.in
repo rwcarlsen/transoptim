@@ -22,7 +22,6 @@ method
     soga
         population_size 100
         print_each_pop
-        initialization_type flat_file 'initial.pop'
         mutation_type replace_uniform
             mutation_rate 0.03
         crossover_type
