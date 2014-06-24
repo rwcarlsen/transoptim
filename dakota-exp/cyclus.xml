@@ -60,7 +60,7 @@
         <wastecommod_>waste</wastecommod_>
         <inrecipe_>dummy</inrecipe_>
         <inpref_>2.0</inpref_>
-        <inbuf_size_>60000</inbuf_size_>
+        <inbuf_size_>1e10</inbuf_size_>
         <outbuf_size_>60000</outbuf_size_>
         <wastebuf_size_>60000</wastebuf_size_>
         <throughput_>60000</throughput_>
@@ -89,7 +89,7 @@
         <inbuf1_size_>600000</inbuf1_size_>
         <inbuf2_size_>600000</inbuf2_size_>
         <outbuf_size_>60000</outbuf_size_>
-        <throughput_>60000</throughput_>
+        <throughput_>1e10</throughput_>
       </RecipeMixer>
     </config>
   </prototype>
@@ -110,13 +110,13 @@
           <incommodity>lwr_mox</incommodity>
           <inrecipe>lwr_mox_fuel</inrecipe>
           <outcommodity>waste</outcommodity>
-          <outrecipe>lwr_mox_fuel</outrecipe>
+          <outrecipe>mox_spent_fuel</outrecipe>
         </fuel>
 
-        <processtime>18</processtime>
+        <processtime>6</processtime>
         <nbatches>3</nbatches>
         <batchsize>20000</batchsize>
-        <refueltime>3</refueltime>
+        <refueltime>1</refueltime>
 
         <commodity_production>
           <commodity>lwr_power</commodity>
@@ -178,6 +178,18 @@
     <nuclide> <id>922380000</id><comp>0.9099619</comp></nuclide>
     <nuclide> <id>942380000</id> <comp>0.001746</comp> </nuclide>
     <nuclide> <id>942390000</id> <comp>0.045396</comp> </nuclide>
+    <nuclide> <id>942400000</id> <comp>0.020952</comp> </nuclide>
+    <nuclide> <id>942410000</id> <comp>0.013095</comp> </nuclide>
+    <nuclide> <id>942420000</id> <comp>0.005238</comp> </nuclide>
+  </recipe>
+
+  <recipe>
+    <name>mox_spent_fuel</name>
+    <basis>mass</basis>
+    <nuclide> <id>922350000</id><comp>0.0017381</comp></nuclide>
+    <nuclide> <id>922380000</id><comp>0.90</comp></nuclide>
+    <nuclide> <id>942380000</id> <comp>0.001746</comp> </nuclide>
+    <nuclide> <id>942390000</id> <comp>0.0134</comp> </nuclide>
     <nuclide> <id>942400000</id> <comp>0.020952</comp> </nuclide>
     <nuclide> <id>942410000</id> <comp>0.013095</comp> </nuclide>
     <nuclide> <id>942420000</id> <comp>0.005238</comp> </nuclide>
