@@ -3,7 +3,7 @@
 	"DakotaTmpl": "dakota.in",
 	"CyclusTmpl": "cyclus.xml",
 	"CyclusBin": "/home/r/cyc/install/bin/cyclus",
-	"BuildPeriod": 12,
+	"BuildPeriod": 24,
     "NuclideCost": {
         "942390000": 0.0
     },
@@ -50,19 +50,9 @@
         10,
         10,
         10,
-        10,
-        10,
-        10,
-        10,
-        10,
         20
     ],
 	"MaxPower": [
-        20,
-        20,
-        20,
-        20,
-        20,
         20,
         20,
         20,

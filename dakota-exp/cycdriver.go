@@ -207,7 +207,7 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 		return 0, err
 	}
 	mwh := joules / nuc.MWh
-	mult := 1e4 // to get the objective around 0.1 same magnitude as constraint penalties
+	mult := 1e6 // to get the objective around 0.1 same magnitude as constraint penalties
 	return totcost / (mwh + 1e-30) * mult, nil
 }
 

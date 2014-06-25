@@ -88,8 +88,8 @@
         <outrecipe_>lwr_mox_fuel</outrecipe_>
         <inbuf1_size_>600000</inbuf1_size_>
         <inbuf2_size_>600000</inbuf2_size_>
-        <outbuf_size_>60000</outbuf_size_>
-        <throughput_>1e10</throughput_>
+        <outbuf_size_>1e10</outbuf_size_>
+        <throughput_>60000</throughput_>
       </RecipeMixer>
     </config>
   </prototype>

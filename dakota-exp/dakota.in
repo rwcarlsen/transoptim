@@ -22,7 +22,8 @@ method
     soga
         population_size 100
         print_each_pop
-        mutation_type replace_uniform
+        mutation_type offset_uniform
+            mutation_scale 0.3
             mutation_rate 0.08
         crossover_type
             multi_point_real 2
