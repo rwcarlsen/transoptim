@@ -5,7 +5,7 @@
 	"CyclusBin": "/home/r/cyc/install/bin/cyclus",
 	"BuildPeriod": 24,
     "NuclideCost": {
-        "942390000": 0.0
+        "942390000": 0.40
     },
     "Discount": 0.05,
 	"Facs": [
@@ -20,7 +20,7 @@
             "CapitalCost": 5000,
             "OpCost": 1,
             "BuildAfter": 0,
-            "WasteDiscount": 0.0
+            "WasteDiscount": 0.05
         }, {
             "Proto": "separations",
             "CapitalCost": 1000,
