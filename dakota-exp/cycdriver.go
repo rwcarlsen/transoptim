@@ -91,7 +91,7 @@ func main() {
 		fatalif(err)
 
 		for i, p := range buildSweep() {
-			if i+1%100 == 0 {
+			if (i+1)%20 == 0 {
 				fatalif(tx.Commit())
 				tx, err = db.Begin()
 				stmt = tx.Stmt(smt)

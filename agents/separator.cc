@@ -1,4 +1,5 @@
 #include "separator.h"
+#include <iomanip>
 
 #define LG(X) LOG(cyclus::LEV_##X, "Seprat")
 
@@ -42,9 +43,9 @@ void Separator::Decommission() {
 
 void Separator::Tick() {
   LG(INFO3) << "Separator id=" << id() << " is ticking";
-  LG(INFO4) << "inbuf quantity = " << inbuf_.quantity();
-  LG(INFO4) << "outbuf quantity = " << outbuf_.quantity();
-  LG(INFO4) << "wastebuf quantity = " << wastebuf_.quantity();
+  LG(INFO4) << "inbuf quantity = " << std::setprecision(17) << inbuf_.quantity();
+  LG(INFO4) << "outbuf quantity = " << std::setprecision(17) << outbuf_.quantity();
+  LG(INFO4) << "wastebuf quantity = " << std::setprecision(17) << wastebuf_.quantity();
   if (inbuf_.count() == 0) {
     return;
   }
@@ -66,15 +67,15 @@ void Separator::Tick() {
       cm[n] = 0;
     } else {
       cm[n] *= effs_[n];
-      LG(INFO5) << "extracting qty " << cm[n] << " of nuc " << n << " (eff=" << effs_[n] << ")";
+      LG(INFO5) << "extracting qty " << std::setprecision(17) << cm[n] << " of nuc " << n << " (eff=" << effs_[n] << ")";
       qty += cm[n];
     }
   }
 
-  LG(INFO4) << "extracting total qty " << qty << " from inbuf";
+  LG(INFO4) << "extracting total qty " << std::setprecision(17) << qty << " from inbuf";
 
   Composition::Ptr c = Composition::CreateFromMass(cm);
-  Material::Ptr keep = m->ExtractComp(qty, c);
+  Material::Ptr keep = m->ExtractComp(std::min(qty, m->quantity()), c);
 
   if (m->quantity() <= wastebuf_.space()) {
     wastebuf_.Push(m);
