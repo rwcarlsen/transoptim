@@ -25,6 +25,7 @@ var scenfile = flag.String("scen", "scenario.json", "file containing problem sce
 var dakotaGen = flag.Bool("init", false, "true to generate the dakota input file")
 var dakotaif = flag.String("o", "", "name of generated dakota input file")
 var metric = flag.String("metric", "", "path to cyclus db to calc objective for")
+var sweep = flag.String("sweep", "", "path to output db file")
 
 const tmpDir = "cyctmp"
 
@@ -50,6 +51,69 @@ func main() {
 
 		err = t.Execute(f, scen)
 		fatalif(err)
+		return
+	}
+
+	if *sweep != "" {
+		db, err := sql.Open("sqlite3", *sweep)
+		fatalif(err)
+		defer db.Close()
+		db.Exec(`
+			CREATE TABLE IF NOT EXISTS Sweep (
+				f1_t1 INTEGER,
+				f1_t2 INTEGER,
+				f1_t3 INTEGER,
+				f1_t4 INTEGER,
+				f1_t5 INTEGER,
+				f2_t1 INTEGER,
+				f2_t2 INTEGER,
+				f2_t3 INTEGER,
+				f2_t4 INTEGER,
+				f2_t5 INTEGER,
+				f3_t1 INTEGER,
+				f3_t2 INTEGER,
+				f3_t3 INTEGER,
+				f3_t4 INTEGER,
+				f3_t5 INTEGER,
+				f4_t1 INTEGER,
+				f4_t2 INTEGER,
+				f4_t3 INTEGER,
+				f4_t4 INTEGER,
+				f4_t5 INTEGER,
+				Objective REAL
+			);
+		`)
+		smt, err := db.Prepare("INSERT INTO Sweep VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);")
+		fatalif(err)
+
+		tx, err := db.Begin()
+		stmt := tx.Stmt(smt)
+		fatalif(err)
+
+		for i, p := range buildSweep() {
+			if i+1%100 == 0 {
+				fatalif(tx.Commit())
+				tx, err = db.Begin()
+				stmt = tx.Stmt(smt)
+				fatalif(err)
+			}
+
+			scen.InitParams(p)
+			cycdb, simid, err := RunSim(scen)
+			fatalif(err)
+			val, err := CalcObjective(cycdb, simid, scen)
+			fatalif(err)
+
+			vals := []interface{}{}
+			for _, v := range p {
+				vals = append(vals, v)
+			}
+			vals = append(vals, val)
+
+			_, err = stmt.Exec(vals...)
+			fatalif(err)
+		}
+		fatalif(tx.Commit())
 		return
 	}
 
@@ -83,44 +147,66 @@ func main() {
 	err = ParseParams(scen, paramsFile)
 	fatalif(err)
 
+	cycout, simid, err := RunSim(scen)
+	fatalif(err)
+
+	// calculate and write out objective val
+	resultFile := flag.Arg(1)
+	val, err := CalcObjective(cycout, simid, scen)
+	fatalif(err)
+
+	err = ioutil.WriteFile(resultFile, []byte(fmt.Sprint(val)), 0755)
+	fatalif(err)
+}
+
+func RunSim(scen *Scenario) (dbfile string, simid []byte, err error) {
+	if scen.Handle == "" {
+		scen.Handle = "none"
+	}
+
 	// generate cyclus input file and run cyclus
 	ui := uuid.NewRandom()
 	err = os.MkdirAll(tmpDir, 0755)
-	fatalif(err)
+	if err != nil {
+		return "", nil, err
+	}
 
 	cycin := filepath.Join(tmpDir, ui.String()+".cyclus.xml")
 	cycout := filepath.Join(tmpDir, ui.String()+".sqlite")
 
 	err = GenCyclusInfile(scen, cycin)
-	fatalif(err)
+	if err != nil {
+		return "", nil, err
+	}
 
 	cmd := exec.Command(scen.CyclusBin, cycin, "-o", cycout)
 	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	fatalif(err)
+	if err := cmd.Run(); err != nil {
+		return "", nil, err
+	}
 
 	// post process cyclus output db
 	db, err := sql.Open("sqlite3", cycout)
-	fatalif(err)
+	if err != nil {
+		return "", nil, err
+	}
 	defer db.Close()
 
-	fatalif(post.Prepare(db))
+	if err := post.Prepare(db); err != nil {
+		return "", nil, err
+	}
 	defer post.Finish(db)
 
 	simids, err := post.GetSimIds(db)
-	fatalif(err)
+	if err != nil {
+		return "", nil, err
+	}
 
 	ctx := post.NewContext(db, simids[0])
-	err = ctx.WalkAll()
-	fatalif(err)
-
-	// calculate and write out objective val
-	resultFile := flag.Arg(1)
-	val, err := CalcObjective(cycout, simids[0], scen)
-	fatalif(err)
-
-	err = ioutil.WriteFile(resultFile, []byte(fmt.Sprint(val)), 0755)
-	fatalif(err)
+	if err := ctx.WalkAll(); err != nil {
+		return "", nil, err
+	}
+	return cycout, simids[0], nil
 }
 
 func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error) {
