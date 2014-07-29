@@ -214,6 +214,7 @@ func CalcObjective(dbfile string, simid []byte, scen *Scenario) (float64, error)
 	if err != nil {
 		return 0, err
 	}
+	defer db.Close()
 
 	// add up overnight and operating costs converted to PV(t=0)
 	q1 := `

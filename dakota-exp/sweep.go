@@ -5,6 +5,7 @@ func buildSweep() [][]int {
 	perms := [][]int{}
 	for _, p := range iperms {
 		perms = append(perms, p)
+		p[4] = 10 - Sum(p, 0, 4)
 	}
 	return perms
 }
